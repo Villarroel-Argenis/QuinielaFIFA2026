@@ -5,6 +5,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <BlazorDisableThrowNavigationException>true</BlazorDisableThrowNavigationException>
+    <NoWarn>$(NoWarn);NETSDK1064</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
