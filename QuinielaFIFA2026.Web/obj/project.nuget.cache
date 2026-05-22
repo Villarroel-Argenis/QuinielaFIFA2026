@@ -1,10 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "dJ9mvlewC/4=",
+  "dgSpecHash": "muBKFufeBN8=",
   "success": true,
   "projectFilePath": "/home/aovs/sources/QuinielaFIFA2026/QuinielaFIFA2026.Web/QuinielaFIFA2026.Web.csproj",
   "expectedPackageFiles": [
-    "/home/aovs/.nuget/packages/microsoft.aspnetcore.app.internal.assets/10.0.8/microsoft.aspnetcore.app.internal.assets.10.0.8.nupkg.sha512"
+    "/home/aovs/.nuget/packages/microsoft.aspnetcore.app.internal.assets/10.0.8/microsoft.aspnetcore.app.internal.assets.10.0.8.nupkg.sha512",
+    "/home/aovs/.nuget/packages/mudblazor/9.4.0/mudblazor.9.4.0.nupkg.sha512"
   ],
   "logs": []
 }

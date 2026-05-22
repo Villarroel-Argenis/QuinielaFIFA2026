@@ -83,3 +83,10 @@
 /home/aovs/sources/QuinielaFIFA2026/QuinielaFIFA2026.Web/obj/Debug/net10.0/QuinielaFIFA2026.Web.pdb
 /home/aovs/sources/QuinielaFIFA2026/QuinielaFIFA2026.Web/obj/Debug/net10.0/QuinielaFIFA2026.Web.genruntimeconfig.cache
 /home/aovs/sources/QuinielaFIFA2026/QuinielaFIFA2026.Web/obj/Debug/net10.0/ref/QuinielaFIFA2026.Web.dll
+/home/aovs/sources/QuinielaFIFA2026/QuinielaFIFA2026.Web/bin/Debug/net10.0/MudBlazor.dll
+/home/aovs/sources/QuinielaFIFA2026/QuinielaFIFA2026.Web/obj/Debug/net10.0/QuinielaFIFA2026.Web.csproj.AssemblyReference.cache
+/home/aovs/sources/QuinielaFIFA2026/QuinielaFIFA2026.Web/obj/Debug/net10.0/QuinielaFIFA2026.Web.sourcelink.json
+/home/aovs/sources/QuinielaFIFA2026/QuinielaFIFA2026.Web/obj/Debug/net10.0/compressed/tzxjg6is5z-{0}-6x2ajsl5c8-6x2ajsl5c8.gz
+/home/aovs/sources/QuinielaFIFA2026/QuinielaFIFA2026.Web/obj/Debug/net10.0/compressed/0wz98yz2xy-{0}-jolev99wdd-jolev99wdd.gz
+/home/aovs/sources/QuinielaFIFA2026/QuinielaFIFA2026.Web/obj/Debug/net10.0/compressed/o7k4cxtn0u-{0}-h82a7aihv0-h82a7aihv0.gz
+/home/aovs/sources/QuinielaFIFA2026/QuinielaFIFA2026.Web/obj/Debug/net10.0/Quiniela.021CDD63.Up2Date
