@@ -7,6 +7,9 @@ builder.Services.AddRazorComponents()
 builder.Services.AddMudServices();
 builder.Services.AddDbContext<AppDbContext>(options => 
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddScoped<SessionService>();
+builder.Services.AddScoped<QuinielaService>();
+
 
 var app = builder.Build();
 
@@ -31,6 +34,7 @@ using (var scope = app.Services.CreateScope())
     try
     {
         var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        db.Database.Migrate();  // ← reemplaza EnsureCreated por Migrate
         await SeedService.SeedAsync(db);
     }
     catch (Exception ex)

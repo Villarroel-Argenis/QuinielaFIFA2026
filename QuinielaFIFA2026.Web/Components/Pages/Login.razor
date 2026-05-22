@@ -1,0 +1,84 @@
+@page "/"
+@rendermode InteractiveServer
+
+<PageTitle>Quiniela FIFA 2026</PageTitle>
+
+<MudContainer MaxWidth="MaxWidth.Small" Class="mt-16">
+    <MudPaper Elevation="3" Class="pa-8">
+        <div class="d-flex justify-center mb-6">
+            <MudText Typo="Typo.h4" Align="Align.Center">
+                🏆 Quiniela FIFA 2026
+            </MudText>
+        </div>
+        <MudText Typo="Typo.subtitle1" Align="Align.Center" Class="mb-6 mud-text-secondary">
+            11 junio – 19 julio 2026
+        </MudText>
+
+        @if (!_showAdmin)
+        {
+            <MudTextField @bind-Value="_username"
+                          Label="Nombre de usuario"
+                          Variant="Variant.Outlined"
+                          Class="mb-4"
+                          OnKeyUp="OnKeyUp" />
+
+            @if (!string.IsNullOrEmpty(_error))
+            {
+                <MudAlert Severity="Severity.Error" Class="mb-4">@_error</MudAlert>
+            }
+
+            <MudButton Variant="Variant.Filled"
+                       Color="Color.Primary"
+                       FullWidth="true"
+                       OnClick="HandleLogin"
+                       Disabled="_loading">
+                @if (_loading)
+                {
+                    <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2" />
+                }
+                Entrar
+            </MudButton>
+
+            <MudButton Variant="Variant.Text"
+                       FullWidth="true"
+                       Class="mt-2"
+                       OnClick="() => _showAdmin = true">
+                Acceso administrador
+            </MudButton>
+        }
+        else
+        {
+            <MudTextField @bind-Value="_username"
+                          Label="Nombre de usuario"
+                          Variant="Variant.Outlined"
+                          Class="mb-4" />
+
+            <MudTextField @bind-Value="_adminPass"
+                          Label="Contraseña"
+                          Variant="Variant.Outlined"
+                          InputType="InputType.Password"
+                          Class="mb-4"
+                          OnKeyUp="OnKeyUp" />
+
+            @if (!string.IsNullOrEmpty(_error))
+            {
+                <MudAlert Severity="Severity.Error" Class="mb-4">@_error</MudAlert>
+            }
+
+            <MudButton Variant="Variant.Filled"
+                       Color="Color.Warning"
+                       FullWidth="true"
+                       OnClick="HandleAdminLogin"
+                       Disabled="_loading">
+                Entrar como Administrador
+            </MudButton>
+
+            <MudButton Variant="Variant.Text"
+                       FullWidth="true"
+                       Class="mt-2"
+                       OnClick='() => { _showAdmin = false; _error = ""; }'>
+                ← Volver
+            </MudButton>
+        }
+    </MudPaper>
+</MudContainer>

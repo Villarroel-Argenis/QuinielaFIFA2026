@@ -38,24 +38,16 @@ build_property.EnableCodeStyleSeverity =
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9BcHAucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[/home/aovs/sources/QuinielaFIFA2026/QuinielaFIFA2026.Web/Components/Pages/Counter.razor]
-build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9Db3VudGVyLnJhem9y
-build_metadata.AdditionalFiles.CssScope = 
-
 [/home/aovs/sources/QuinielaFIFA2026/QuinielaFIFA2026.Web/Components/Pages/Error.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9FcnJvci5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-[/home/aovs/sources/QuinielaFIFA2026/QuinielaFIFA2026.Web/Components/Pages/Home.razor]
-build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9Ib21lLnJhem9y
+[/home/aovs/sources/QuinielaFIFA2026/QuinielaFIFA2026.Web/Components/Pages/Login.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9Mb2dpbi5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
 [/home/aovs/sources/QuinielaFIFA2026/QuinielaFIFA2026.Web/Components/Pages/NotFound.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9Ob3RGb3VuZC5yYXpvcg==
-build_metadata.AdditionalFiles.CssScope = 
-
-[/home/aovs/sources/QuinielaFIFA2026/QuinielaFIFA2026.Web/Components/Pages/Weather.razor]
-build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9XZWF0aGVyLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
 [/home/aovs/sources/QuinielaFIFA2026/QuinielaFIFA2026.Web/Components/Routes.razor]
