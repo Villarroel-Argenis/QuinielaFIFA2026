@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "dJ9mvlewC/4=",
+  "success": true,
+  "projectFilePath": "/home/aovs/sources/QuinielaFIFA2026/QuinielaFIFA2026.Web/QuinielaFIFA2026.Web.csproj",
+  "expectedPackageFiles": [
+    "/home/aovs/.nuget/packages/microsoft.aspnetcore.app.internal.assets/10.0.8/microsoft.aspnetcore.app.internal.assets.10.0.8.nupkg.sha512"
+  ],
+  "logs": []
+}
