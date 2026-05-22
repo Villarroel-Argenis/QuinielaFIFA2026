@@ -31,6 +31,7 @@ using (var scope = app.Services.CreateScope())
     try
     {
         var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        db.Database.Migrate();  // ← reemplaza EnsureCreated por Migrate
         await SeedService.SeedAsync(db);
     }
     catch (Exception ex)
