@@ -17,4 +17,6 @@ public class Match
 
     public bool IsLocked => DateTime.UtcNow >= MatchDateUtc;
     public bool HasTeams => HomeTeam != "TBD" && AwayTeam != "TBD";
+    public string HomeFlagEmoji { get; set; } = "";
+    public string AwayFlagEmoji { get; set; } = "";
 }

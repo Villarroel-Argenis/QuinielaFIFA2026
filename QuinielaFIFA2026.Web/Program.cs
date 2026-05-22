@@ -26,4 +26,17 @@ app.MapStaticAssets();
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 
+using (var scope = app.Services.CreateScope())
+{
+    try
+    {
+        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        await SeedService.SeedAsync(db);
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"[SEED ERROR] {ex.Message}");
+    }
+}
+
 app.Run();
