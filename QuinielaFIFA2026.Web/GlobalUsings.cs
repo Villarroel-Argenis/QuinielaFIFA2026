@@ -15,4 +15,5 @@ global using QuinielaFIFA2026.Web;
 global using QuinielaFIFA2026.Web.Components;
 global using QuinielaFIFA2026.Web.Components.Layout;
 global using QuinielaFIFA2026.Web.Data;
+global using QuinielaFIFA2026.Web.Data.Models;
 global using static Microsoft.AspNetCore.Components.Web.RenderMode;
