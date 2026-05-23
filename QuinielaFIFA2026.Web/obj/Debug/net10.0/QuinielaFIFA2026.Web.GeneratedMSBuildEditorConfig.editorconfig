@@ -46,6 +46,10 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9Mb2dpbi5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
+[/home/aovs/sources/QuinielaFIFA2026/QuinielaFIFA2026.Web/Components/Pages/MisPlanillas.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9NaXNQbGFuaWxsYXMucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
 [/home/aovs/sources/QuinielaFIFA2026/QuinielaFIFA2026.Web/Components/Pages/NotFound.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9Ob3RGb3VuZC5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
