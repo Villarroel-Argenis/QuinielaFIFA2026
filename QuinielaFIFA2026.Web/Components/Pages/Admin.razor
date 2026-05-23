@@ -1,0 +1,151 @@
+@page "/admin"
+@rendermode InteractiveServer
+
+<PageTitle>Panel Administrador</PageTitle>
+
+<MudContainer MaxWidth="MaxWidth.Large" Class="mt-4">
+    <MudText Typo="Typo.h5" Class="mb-4">Panel de Administrador</MudText>
+
+    <MudTabs Elevation="2" Rounded="true" ApplyEffectsToContainer="true">
+
+        <!-- TAB 1: Generar Lotes -->
+        <MudTabPanel Text="Generar Planillas" Icon="@Icons.Material.Filled.Add">
+            <MudContainer Class="pa-4">
+                <MudText Typo="Typo.h6" Class="mb-3">Generar lote de planillas</MudText>
+                <MudGrid>
+                    <MudItem xs="12" sm="4">
+                        <MudNumericField @bind-Value="_cantidad"
+                                         Label="Cantidad de planillas"
+                                         Variant="Variant.Outlined"
+                                         Min="1" Max="100" />
+                    </MudItem>
+                    <MudItem xs="12" sm="4" Class="d-flex align-center">
+                        <MudButton Variant="Variant.Filled"
+                                   Color="Color.Primary"
+                                   OnClick="GenerarPlanillas"
+                                   Disabled="_generando"
+                                   StartIcon="@Icons.Material.Filled.Print">
+                            Generar Lote
+                        </MudButton>
+                    </MudItem>
+                </MudGrid>
+
+                @if (_ultimoLote is not null)
+                {
+                    <MudAlert Severity="Severity.Success" Class="mt-4">
+                        Lote <strong>@_ultimoLote.Codigo</strong> generado con @_ultimoLote.Planillas.Count planillas.
+                    </MudAlert>
+                }
+
+                @if (_lotes.Any())
+                {
+                    <MudText Typo="Typo.h6" Class="mt-6 mb-3">Lotes generados</MudText>
+                    @foreach (var lote in _lotes)
+                    {
+                        <MudExpansionPanel Class="mb-2">
+                            <TitleContent>
+                                <div class="d-flex align-center gap-4">
+                                    <MudText Typo="Typo.subtitle1"><strong>@lote.Codigo</strong></MudText>
+                                    <MudChip T="string" Size="Size.Small" Color="Color.Primary">
+                                        @lote.Cantidad planillas
+                                    </MudChip>
+                                    <MudText Typo="Typo.body2" Class="mud-text-secondary">
+                                        @lote.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy HH:mm")
+                                    </MudText>
+                                    <MudButton Variant="Variant.Outlined"
+                                               Size="Size.Small"
+                                               Color="Color.Primary"
+                                               StartIcon="@Icons.Material.Filled.PictureAsPdf">
+                                        Imprimir PDF
+                                    </MudButton>
+                                </div>
+                            </TitleContent>
+                            <ChildContent>
+                                <MudTable Items="lote.Planillas" Hover="true" Striped="true" Dense="true">
+                                    <HeaderContent>
+                                        <MudTh>Código</MudTh>
+                                        <MudTh>Estado</MudTh>
+                                    </HeaderContent>
+                                    <RowTemplate>
+                                        <MudTd>@context.Codigo</MudTd>
+                                        <MudTd>
+                                            @if (context.IsAssigned)
+                                            {
+                                                <MudChip T="string" Color="Color.Success" Size="Size.Small">Asignada</MudChip>
+                                            }
+                                            else
+                                            {
+                                                <MudChip T="string" Color="Color.Warning" Size="Size.Small">Sin asignar</MudChip>
+                                            }
+                                        </MudTd>
+                                    </RowTemplate>
+                                </MudTable>
+                            </ChildContent>
+                        </MudExpansionPanel>
+                    }
+                }
+            </MudContainer>
+        </MudTabPanel>
+
+        <!-- TAB 2: Planillas Asignadas -->
+        <MudTabPanel Text="Planillas Asignadas" Icon="@Icons.Material.Filled.People">
+            <MudContainer Class="pa-4">
+                <MudText Typo="Typo.h6" Class="mb-3">Planillas vinculadas a usuarios</MudText>
+                @if (_planillasAsignadas is null)
+                {
+                    <MudProgressLinear Indeterminate="true" />
+                }
+                else if (!_planillasAsignadas.Any())
+                {
+                    <MudAlert Severity="Severity.Info">No hay planillas asignadas aún.</MudAlert>
+                }
+                else
+                {
+                    <MudTable Items="_planillasAsignadas" Hover="true" Striped="true">
+                        <HeaderContent>
+                            <MudTh>Código</MudTh>
+                            <MudTh>Lote</MudTh>
+                            <MudTh>Usuario</MudTh>
+                            <MudTh>Fecha asignación</MudTh>
+                            <MudTh>Acción</MudTh>
+                        </HeaderContent>
+                        <RowTemplate>
+                            <MudTd>@context.Codigo</MudTd>
+                            <MudTd>@context.Lote?.Codigo</MudTd>
+                            <MudTd>@context.User?.Username</MudTd>
+                            <MudTd>@context.AssignedAt?.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</MudTd>
+                            <MudTd>
+                                <MudButton Variant="Variant.Outlined"
+                                           Color="Color.Error"
+                                           Size="Size.Small"
+                                           OnClick="() => ConfirmarDesvincular(context)">
+                                    Desvincular
+                                </MudButton>
+                            </MudTd>
+                        </RowTemplate>
+                    </MudTable>
+                }
+            </MudContainer>
+        </MudTabPanel>
+
+    </MudTabs>
+</MudContainer>
+
+<MudDialog @bind-Visible="_showConfirm">
+    <TitleContent>
+        <MudText Typo="Typo.h6">Confirmar desvinculación</MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudText>
+            ¿Estás seguro que deseas desvincular la planilla <strong>@_planillaSeleccionada?.Codigo</strong>
+            del usuario <strong>@_planillaSeleccionada?.User?.Username</strong>?
+            Se borrarán todas sus predicciones.
+        </MudText>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="() => _showConfirm = false">Cancelar</MudButton>
+        <MudButton Color="Color.Error" Variant="Variant.Filled" OnClick="EjecutarDesvincular">
+            Desvincular
+        </MudButton>
+    </DialogActions>
+</MudDialog>

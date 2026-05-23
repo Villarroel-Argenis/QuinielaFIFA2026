@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using QuinielaFIFA2026.Web.Data;
@@ -11,9 +12,11 @@ using QuinielaFIFA2026.Web.Data;
 namespace QuinielaFIFA2026.Web.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260523165826_RemoveIsActiveFromPlanilla")]
+    partial class RemoveIsActiveFromPlanilla
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,29 +24,6 @@ namespace QuinielaFIFA2026.Web.Data.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
-
-            modelBuilder.Entity("QuinielaFIFA2026.Web.Data.Models.Lote", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("Cantidad")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Codigo")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Lotes");
-                });
 
             modelBuilder.Entity("QuinielaFIFA2026.Web.Data.Models.Match", b =>
                 {
@@ -148,15 +128,10 @@ namespace QuinielaFIFA2026.Web.Data.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int?>("LoteId")
-                        .HasColumnType("integer");
-
                     b.Property<int?>("UserId")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("LoteId");
 
                     b.HasIndex("UserId");
 
@@ -228,15 +203,9 @@ namespace QuinielaFIFA2026.Web.Data.Migrations
 
             modelBuilder.Entity("QuinielaFIFA2026.Web.Data.Models.Planilla", b =>
                 {
-                    b.HasOne("QuinielaFIFA2026.Web.Data.Models.Lote", "Lote")
-                        .WithMany("Planillas")
-                        .HasForeignKey("LoteId");
-
                     b.HasOne("QuinielaFIFA2026.Web.Data.Models.User", "User")
                         .WithMany("Planillas")
                         .HasForeignKey("UserId");
-
-                    b.Navigation("Lote");
 
                     b.Navigation("User");
                 });
@@ -258,11 +227,6 @@ namespace QuinielaFIFA2026.Web.Data.Migrations
                     b.Navigation("Match");
 
                     b.Navigation("Planilla");
-                });
-
-            modelBuilder.Entity("QuinielaFIFA2026.Web.Data.Models.Lote", b =>
-                {
-                    b.Navigation("Planillas");
                 });
 
             modelBuilder.Entity("QuinielaFIFA2026.Web.Data.Models.Match", b =>
