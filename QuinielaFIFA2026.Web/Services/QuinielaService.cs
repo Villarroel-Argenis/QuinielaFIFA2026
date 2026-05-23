@@ -16,6 +16,11 @@ public class QuinielaService(AppDbContext db)
         return user;
     }
     
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="userId"></param>
+    /// <returns></returns>
     public async Task<List<Planilla>> GetUserPlanillasAsync(int userId)
     {
         return await db.Planillas
