@@ -16,6 +16,7 @@
     </PackageReference>
     <PackageReference Include="MudBlazor" Version="9.4.0" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.1" />
+    <PackageReference Include="QuestPDF" Version="2026.5.0" />
   </ItemGroup>
 
   <ItemGroup>

@@ -9,7 +9,9 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddScoped<SessionService>();
 builder.Services.AddScoped<QuinielaService>();
+builder.Services.AddScoped<PlanillaPdfService>();
 
+QuestPDF.Settings.License = QuestPDF.Infrastructure.LicenseType.Community;
 
 var app = builder.Build();
 
@@ -43,4 +45,5 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
+app.MapLoteEndpoints();
 app.Run();
