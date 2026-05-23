@@ -1,0 +1,92 @@
+@page "/mis-planillas"
+@rendermode InteractiveServer
+
+<PageTitle>Mis Planillas</PageTitle>
+
+<MudContainer MaxWidth="MaxWidth.Large" Class="mt-4">
+
+    <MudText Typo="Typo.h5" Class="mb-1">Mis Planillas</MudText>
+    <MudText Typo="Typo.body2" Class="mb-4 mud-text-secondary">
+        Ingresa el código de tu planilla para participar
+    </MudText>
+
+    <!-- Vincular código -->
+    <MudPaper Elevation="2" Class="pa-4 mb-6">
+        <MudText Typo="Typo.h6" Class="mb-3">Vincular nueva planilla</MudText>
+        <MudGrid>
+            <MudItem xs="12" sm="8">
+                <MudTextField @bind-Value="_codigo"
+                              Label="Código de planilla (Ej: P-12345678)"
+                              Variant="Variant.Outlined"
+                              FullWidth="true" />
+            </MudItem>
+            <MudItem xs="12" sm="4" Class="d-flex align-center">
+                <MudButton Variant="Variant.Filled"
+                           Color="Color.Primary"
+                           FullWidth="true"
+                           OnClick="VincularPlanilla"
+                           Disabled="_loading">
+                    Vincular
+                </MudButton>
+            </MudItem>
+        </MudGrid>
+        @if (!string.IsNullOrEmpty(_error))
+        {
+            <MudAlert Severity="Severity.Error" Class="mt-3">@_error</MudAlert>
+        }
+        @if (!string.IsNullOrEmpty(_success))
+        {
+            <MudAlert Severity="Severity.Success" Class="mt-3">@_success</MudAlert>
+        }
+    </MudPaper>
+
+    <!-- Lista de planillas -->
+    @if (_planillas is null)
+    {
+        <MudProgressLinear Indeterminate="true" />
+    }
+    else if (!_planillas.Any())
+    {
+        <MudAlert Severity="Severity.Info">
+            No tienes planillas vinculadas aún. Ingresa tu código para participar.
+        </MudAlert>
+    }
+    else
+    {
+        <MudGrid>
+            @foreach (var p in _planillas)
+            {
+                <MudItem xs="12" sm="6" md="4">
+                    <MudCard Elevation="2">
+                        <MudCardHeader>
+                            <CardHeaderContent>
+                                <MudText Typo="Typo.h6">@p.Codigo</MudText>
+                                <MudText Typo="Typo.body2" Class="mud-text-secondary">
+                                    Vinculada el @p.AssignedAt?.ToLocalTime().ToString("dd/MM/yyyy")
+                                </MudText>
+                            </CardHeaderContent>
+                            <CardHeaderActions>
+                                @if (p.IsActive)
+                                {
+                                    <MudChip T="string" Color="Color.Success" Size="Size.Small">Activa</MudChip>
+                                }
+                                else
+                                {
+                                    <MudChip T="string" Color="Color.Warning" Size="Size.Small">Pendiente</MudChip>
+                                }
+                            </CardHeaderActions>
+                        </MudCardHeader>
+                        <MudCardActions>
+                            <MudButton Variant="Variant.Filled"
+                                       Color="Color.Primary"
+                                       Size="Size.Small"
+                                       Href="@($"/planilla/{p.Id}")">
+                                Ver Predicciones
+                            </MudButton>
+                        </MudCardActions>
+                    </MudCard>
+                </MudItem>
+            }
+        </MudGrid>
+    }
+</MudContainer>

@@ -179,3 +179,4 @@
 /home/aovs/sources/QuinielaFIFA2026/QuinielaFIFA2026.Web/bin/Debug/net10.0/tr/Microsoft.CodeAnalysis.Workspaces.MSBuild.resources.dll
 /home/aovs/sources/QuinielaFIFA2026/QuinielaFIFA2026.Web/bin/Debug/net10.0/zh-Hans/Microsoft.CodeAnalysis.Workspaces.MSBuild.resources.dll
 /home/aovs/sources/QuinielaFIFA2026/QuinielaFIFA2026.Web/bin/Debug/net10.0/zh-Hant/Microsoft.CodeAnalysis.Workspaces.MSBuild.resources.dll
+/home/aovs/sources/QuinielaFIFA2026/QuinielaFIFA2026.Web/obj/Debug/net10.0/compressed/rbfeawsesm-{0}-4qmp7g29gr-4qmp7g29gr.gz
