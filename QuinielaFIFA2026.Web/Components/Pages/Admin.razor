@@ -55,7 +55,9 @@
                                     <MudButton Variant="Variant.Outlined"
                                                Size="Size.Small"
                                                Color="Color.Primary"
-                                               StartIcon="@Icons.Material.Filled.PictureAsPdf">
+                                               StartIcon="@Icons.Material.Filled.PictureAsPdf"
+                                               Href="@($"/api/lote/{lote.Id}/pdf")"
+                                               Target="_blank">
                                         Imprimir PDF
                                     </MudButton>
                                 </div>
