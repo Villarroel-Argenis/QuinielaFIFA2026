@@ -1,0 +1,71 @@
+@page "/tabla"
+@rendermode InteractiveServer
+
+<PageTitle>Tabla General</PageTitle>
+
+<MudContainer MaxWidth="MaxWidth.Large" Class="mt-4">
+    <MudText Typo="Typo.h5" Class="mb-1">Tabla General</MudText>
+    <MudText Typo="Typo.body2" Class="mb-4 mud-text-secondary">
+        Ranking de todas las planillas participantes
+    </MudText>
+
+    @if (_entries is null)
+    {
+        <MudProgressLinear Indeterminate="true" />
+    }
+    else if (!_entries.Any())
+    {
+        <MudAlert Severity="Severity.Info">
+            Aún no hay predicciones registradas.
+        </MudAlert>
+    }
+    else
+    {
+        <MudTable Items="_entries" Hover="true" Striped="true" Elevation="2">
+            <HeaderContent>
+                <MudTh Style="width:60px">#</MudTh>
+                <MudTh>Participante</MudTh>
+                <MudTh>Planilla</MudTh>
+                <MudTh Style="text-align:center">Predicciones</MudTh>
+                <MudTh Style="text-align:center">Puntos</MudTh>
+            </HeaderContent>
+            <RowTemplate Context="entry">
+                <MudTd>
+                    @{ var pos = GetPosicion(entry); }
+                    @if (pos == 1)
+                    {
+                        <MudIcon Icon="@Icons.Material.Filled.EmojiEvents" Color="Color.Warning" />
+                    }
+                    else if (pos == 2)
+                    {
+                        <MudIcon Icon="@Icons.Material.Filled.EmojiEvents" Style="color: #C0C0C0;" />
+                    }
+                    else if (pos == 3)
+                    {
+                        <MudIcon Icon="@Icons.Material.Filled.EmojiEvents" Style="color: #CD7F32;" />
+                    }
+                    else
+                    {
+                        <MudText>@pos</MudText>
+                    }
+                </MudTd>
+                <MudTd>
+                    @entry.Username
+                    @if (entry.Username == Session.CurrentUser?.Username)
+                    {
+                        <MudChip T="string" Size="Size.Small" Color="Color.Primary" Class="ml-2">Tú</MudChip>
+                    }
+                </MudTd>
+                <MudTd>@entry.Codigo</MudTd>
+                <MudTd Style="text-align:center">@entry.Completadas / 104</MudTd>
+                <MudTd Style="text-align:center">
+                    <MudChip T="string"
+                             Color="@(GetPosicion(entry) <= 3 ? Color.Warning : Color.Default)"
+                             Size="Size.Small">
+                        @entry.Puntos pts
+                    </MudChip>
+                </MudTd>
+            </RowTemplate>
+        </MudTable>
+    }
+</MudContainer>

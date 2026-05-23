@@ -175,4 +175,65 @@ public class QuinielaService(AppDbContext db)
         return await db.Planillas
             .FirstOrDefaultAsync(p => p.Id == planillaId && p.UserId == userId);
     }
+    
+    public async Task<List<LeaderboardEntry>> GetTablaAsync(IConfiguration config)
+    {
+        var planillas = await db.Planillas
+            .Include(p => p.User)
+            .Include(p => p.Predictions)
+            .ThenInclude(pr => pr.Match)
+            .ThenInclude(m => m.Result)
+            .Where(p => p.UserId != null)
+            .ToListAsync();
+
+        var entries = planillas.Select(p =>
+            {
+                var puntos = p.Predictions
+                    .Where(pr => pr.Match.Result != null && pr.PredictedResult == pr.Match.Result.Result)
+                    .Sum(pr => GetPuntosPorStage(pr.Match.Stage, config));
+
+                return new LeaderboardEntry
+                {
+                    PlanillaId = p.Id,
+                    Codigo = p.Codigo,
+                    Username = p.User?.Username ?? "",
+                    Puntos = puntos,
+                    Completadas = p.Predictions.Count(pr => pr.PredictedResult != null)
+                };
+            })
+            .OrderByDescending(e => e.Puntos)
+            .ThenByDescending(e => e.Completadas)
+            .ToList();
+
+        return entries;
+    }
+
+    private static int GetPuntosPorStage(string stage, IConfiguration config)
+    {
+        if (stage.StartsWith("Grupo"))
+            return config.GetValue<int>("QuinielaSettings:Puntos:Grupo", 1);
+
+        var key = stage.Replace(" ", "") switch
+        {
+            "Dieciseisavos" => "Dieciseisavos",
+            "Octavos"       => "Octavos",
+            "Cuartos"       => "Cuartos",
+            "Semifinal"     => "Semifinal",
+            "TercerLugar"   => "TercerLugar",
+            "Final"         => "Final",
+            _               => "Grupo"
+        };
+
+        return config.GetValue<int>($"QuinielaSettings:Puntos:{key}", 1);
+    }
+    
+}
+
+public class LeaderboardEntry
+{
+    public int PlanillaId { get; set; }
+    public string Codigo { get; set; } = "";
+    public string Username { get; set; } = "";
+    public int Puntos { get; set; }
+    public int Completadas { get; set; }
 }
