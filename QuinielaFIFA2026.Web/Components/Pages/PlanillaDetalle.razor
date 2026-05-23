@@ -1,0 +1,98 @@
+@page "/planilla/{PlanillaId:int}"
+@rendermode InteractiveServer
+
+<PageTitle>Planilla</PageTitle>
+
+<MudContainer MaxWidth="MaxWidth.Large" Class="mt-4">
+
+    @if (_planilla is null)
+    {
+        <MudProgressLinear Indeterminate="true" />
+    }
+    else
+    {
+        <MudText Typo="Typo.h5" Class="mb-1">@_planilla.Codigo</MudText>
+        <MudText Typo="Typo.body2" Class="mb-4 mud-text-secondary">
+            Vinculada el @_planilla.AssignedAt?.ToLocalTime().ToString("dd/MM/yyyy HH:mm")
+        </MudText>
+
+        @if (_bloqueada)
+        {
+            <MudAlert Severity="Severity.Warning" Class="mb-4">
+                <strong>El torneo ha comenzado.</strong> Las predicciones están bloqueadas.
+            </MudAlert>
+        }
+
+        <MudPaper Elevation="1" Class="pa-3 mb-4">
+            <MudText Typo="Typo.body2" Class="mb-1">
+                @Completadas de @Total predicciones completadas
+            </MudText>
+            <MudProgressLinear Value="@Pct" Color="Color.Primary" Rounded="true" Size="Size.Medium" />
+        </MudPaper>
+
+        <MudTabs Elevation="2" Rounded="true" ApplyEffectsToContainer="true">
+            @foreach (var stage in _stages)
+            {
+                <MudTabPanel Text="@stage">
+                    <MudContainer Class="pa-2">
+                        <MudTable Items="_matchData.Where(m => m.Match.Stage == stage).ToList()"
+                                  Hover="true" Striped="true" Dense="true">
+                            <HeaderContent>
+                                <MudTh>Partido</MudTh>
+                                <MudTh Style="text-align:right">Local</MudTh>
+                                <MudTh></MudTh>
+                                <MudTh>Visitante</MudTh>
+                                <MudTh Style="text-align:center">L</MudTh>
+                                @if (stage.StartsWith("Grupo"))
+                                {
+                                    <MudTh Style="text-align:center">E</MudTh>
+                                }
+                                <MudTh Style="text-align:center">V</MudTh>
+                            </HeaderContent>
+                            <RowTemplate>
+                                <MudTd>@context.Match.MatchNumber</MudTd>
+                                <MudTd Style="text-align:right">
+                                    @context.Match.HomeFlagEmoji @context.Match.HomeTeam
+                                </MudTd>
+                                <MudTd Style="text-align:center; color: #2E7D32; font-weight:bold;">@@</MudTd>
+                                <MudTd>
+                                    @context.Match.AwayFlagEmoji @context.Match.AwayTeam
+                                </MudTd>
+                                <MudTd Style="text-align:center">
+                                    <MudButton Variant="@(context.Pred?.PredictedResult == "home" ? Variant.Filled : Variant.Outlined)"
+                                               Color="Color.Primary"
+                                               Size="Size.Small"
+                                               Disabled="@_bloqueada"
+                                               OnClick='() => Predecir(context.Match.Id, "home")'>
+                                        L
+                                    </MudButton>
+                                </MudTd>
+                                @if (stage.StartsWith("Grupo"))
+                                {
+                                    <MudTd Style="text-align:center">
+                                        <MudButton Variant="@(context.Pred?.PredictedResult == "draw" ? Variant.Filled : Variant.Outlined)"
+                                                   Color="Color.Secondary"
+                                                   Size="Size.Small"
+                                                   Disabled="@_bloqueada"
+                                                   OnClick='() => Predecir(context.Match.Id, "draw")'>
+                                            E
+                                        </MudButton>
+                                    </MudTd>
+                                }
+                                <MudTd Style="text-align:center">
+                                    <MudButton Variant="@(context.Pred?.PredictedResult == "away" ? Variant.Filled : Variant.Outlined)"
+                                               Color="Color.Error"
+                                               Size="Size.Small"
+                                               Disabled="@_bloqueada"
+                                               OnClick='() => Predecir(context.Match.Id, "away")'>
+                                        V
+                                    </MudButton>
+                                </MudTd>
+                            </RowTemplate>
+                        </MudTable>
+                    </MudContainer>
+                </MudTabPanel>
+            }
+        </MudTabs>
+    }
+</MudContainer>

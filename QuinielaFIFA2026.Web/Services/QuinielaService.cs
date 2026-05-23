@@ -128,4 +128,51 @@ public class QuinielaService(AppDbContext db)
 
         return (true, "Lote eliminado correctamente.");
     }
+    
+    public bool IsQuinielaBloqueada(IConfiguration config)
+    {
+        var fechaStr = config["QuinielaSettings:FechaBloqueo"];
+        if (DateTime.TryParse(fechaStr, out var fecha))
+            return DateTime.UtcNow >= fecha;
+        return false;
+    }
+
+    public async Task<List<(Match Match, Prediction? Pred)>> GetPlanillaMatchesAsync(int planillaId)
+    {
+        var matches = await db.Matches
+            .Include(m => m.Result)
+            .OrderBy(m => m.Stage)
+            .ThenBy(m => m.MatchDateUtc)
+            .ToListAsync();
+
+        var preds = await db.Predictions
+            .Where(p => p.PlanillaId == planillaId)
+            .ToDictionaryAsync(p => p.MatchId);
+
+        return matches
+            .Select(m => (m, preds.TryGetValue(m.Id, out var p) ? p : null))
+            .ToList();
+    }
+
+    public async Task SavePredictionAsync(int planillaId, int matchId, string result)
+    {
+        var pred = await db.Predictions
+            .FirstOrDefaultAsync(p => p.PlanillaId == planillaId && p.MatchId == matchId);
+
+        if (pred is null)
+        {
+            pred = new Prediction { PlanillaId = planillaId, MatchId = matchId };
+            db.Predictions.Add(pred);
+        }
+
+        pred.PredictedResult = result;
+        pred.UpdatedAt = DateTime.UtcNow;
+        await db.SaveChangesAsync();
+    }
+    
+    public async Task<Planilla?> GetPlanillaAsync(int planillaId, int userId)
+    {
+        return await db.Planillas
+            .FirstOrDefaultAsync(p => p.Id == planillaId && p.UserId == userId);
+    }
 }
