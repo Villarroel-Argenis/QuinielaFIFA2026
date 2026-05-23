@@ -7,7 +7,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<Planilla> Planillas { get; set; }
     public DbSet<Prediction> Predictions { get; set; }
     public DbSet<MatchResult> MatchResults { get; set; }
-
+    public DbSet<Lote> Lotes { get; set; }
+    
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<User>()

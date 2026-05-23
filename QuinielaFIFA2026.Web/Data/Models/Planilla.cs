@@ -7,7 +7,8 @@ public class Planilla
     public int? UserId { get; set; }                // null hasta que se asigne
     public User? User { get; set; }
     public bool IsAssigned => UserId != null;
-    public bool IsActive { get; set; } = false;     // activada por admin tras pago
+    public int? LoteId { get; set; }
+    public Lote? Lote { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime? AssignedAt { get; set; }
     public DateTime? ActivatedAt { get; set; }

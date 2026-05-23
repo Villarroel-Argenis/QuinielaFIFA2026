@@ -21,10 +21,20 @@ public class QuinielaService(AppDbContext db)
     {
         return await db.Planillas
             .Where(p => p.UserId == userId)
+            .Include(p => p.User)
             .OrderByDescending(p => p.CreatedAt)
             .ToListAsync();
     }
 
+    public async Task<List<Planilla>> GetPlanillasAsignadasAsync()
+    {
+        return await db.Planillas
+            .Include(p => p.User)
+            .Where(p => p.UserId != null)
+            .OrderByDescending(p => p.AssignedAt)
+            .ToListAsync();
+    }
+    
     public async Task<(bool Exito, string Mensaje)> VincularPlanillaAsync(string codigo, int userId)
     {
         var planilla = await db.Planillas
@@ -43,32 +53,61 @@ public class QuinielaService(AppDbContext db)
         return (true, "");
     }
 
-    public async Task<Planilla> CreatePlanillaAsync(int userId)
+  
+    public async Task<Lote> GenerarLoteAsync(int cantidad)
     {
-        var count = await db.Planillas.CountAsync(p => p.UserId == userId);
-        var planilla = new Planilla
+        var lote = new Lote
         {
-            Codigo = GenerarCodigo(),
+            Codigo = $"L-{Random.Shared.Next(10000000, 99999999)}",
+            Cantidad = cantidad
         };
-        db.Planillas.Add(planilla);
+        db.Lotes.Add(lote);
         await db.SaveChangesAsync();
 
-        // Crear 104 predicciones en blanco
-        var matchIds = await db.Matches.Select(m => m.Id).ToListAsync();
-        var predictions = matchIds.Select(mid => new Prediction
+        var planillas = new List<Planilla>();
+        for (int i = 0; i < cantidad; i++)
         {
-            PlanillaId = planilla.Id,
-            MatchId = mid
-        }).ToList();
-        db.Predictions.AddRange(predictions);
+            string codigo;
+            do { codigo = GenerarCodigo(); }
+            while (await db.Planillas.AnyAsync(p => p.Codigo == codigo));
+
+            planillas.Add(new Planilla
+            {
+                Codigo = codigo,
+                LoteId = lote.Id
+            });
+        }
+        db.Planillas.AddRange(planillas);
         await db.SaveChangesAsync();
 
-        return planilla;
+        lote.Planillas = planillas;
+        return lote;
     }
-    
+
+    public async Task<List<Lote>> GetLotesAsync()
+    {
+        return await db.Lotes
+            .Include(l => l.Planillas)
+            .OrderByDescending(l => l.CreatedAt)
+            .ToListAsync();
+    }
+
     private static string GenerarCodigo()
     {
         var numero = Random.Shared.Next(10000000, 99999999);
         return $"P-{numero}";
+    }
+    
+    
+    public async Task DesvincularPlanillaAsync(int planillaId)
+    {
+        var planilla = await db.Planillas
+            .Include(p => p.Predictions)
+            .FirstOrDefaultAsync(p => p.Id == planillaId);
+        if (planilla is null) return;
+        db.Predictions.RemoveRange(planilla.Predictions);
+        planilla.UserId = null;
+        planilla.AssignedAt = null;
+        await db.SaveChangesAsync();
     }
 }

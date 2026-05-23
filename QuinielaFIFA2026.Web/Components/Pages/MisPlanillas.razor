@@ -66,13 +66,11 @@
                                 </MudText>
                             </CardHeaderContent>
                             <CardHeaderActions>
-                                @if (p.IsActive)
+                                @if (p.IsAssigned)
                                 {
-                                    <MudChip T="string" Color="Color.Success" Size="Size.Small">Activa</MudChip>
-                                }
-                                else
-                                {
-                                    <MudChip T="string" Color="Color.Warning" Size="Size.Small">Pendiente</MudChip>
+                                    <MudText Typo="Typo.body2">
+                                        Asignada a: @p.User?.Username
+                                    </MudText>
                                 }
                             </CardHeaderActions>
                         </MudCardHeader>
