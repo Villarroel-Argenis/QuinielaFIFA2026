@@ -110,4 +110,22 @@ public class QuinielaService(AppDbContext db)
         planilla.AssignedAt = null;
         await db.SaveChangesAsync();
     }
+    
+    public async Task<(bool Exito, string Mensaje)> EliminarLoteAsync(int loteId)
+    {
+        var lote = await db.Lotes
+            .Include(l => l.Planillas)
+            .FirstOrDefaultAsync(l => l.Id == loteId);
+
+        if (lote is null) return (false, "Lote no encontrado.");
+
+        if (lote.Planillas.Any(p => p.IsAssigned))
+            return (false, "No se puede eliminar el lote porque tiene planillas asignadas.");
+
+        db.Planillas.RemoveRange(lote.Planillas);
+        db.Lotes.Remove(lote);
+        await db.SaveChangesAsync();
+
+        return (true, "Lote eliminado correctamente.");
+    }
 }
