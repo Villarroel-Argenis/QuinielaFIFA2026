@@ -60,6 +60,13 @@
                                                Target="_blank">
                                         Imprimir PDF
                                     </MudButton>
+                                    <MudButton Variant="Variant.Outlined"
+                                               Size="Size.Small"
+                                               Color="Color.Error"
+                                               StartIcon="@Icons.Material.Filled.Delete"
+                                               OnClick="() => ConfirmarEliminarLote(lote)">
+                                        Eliminar
+                                    </MudButton>
                                 </div>
                             </TitleContent>
                             <ChildContent>
@@ -132,6 +139,28 @@
 
     </MudTabs>
 </MudContainer>
+
+<MudDialog @bind-Visible="_showConfirmLote">
+    <TitleContent>
+        <MudText Typo="Typo.h6">Eliminar lote</MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudText>
+            ¿Estás seguro que deseas eliminar el lote <strong>@_loteSeleccionado?.Codigo</strong>
+            con <strong>@_loteSeleccionado?.Cantidad</strong> planillas?
+        </MudText>
+        @if (!string.IsNullOrEmpty(_errorLote))
+        {
+            <MudAlert Severity="Severity.Error" Class="mt-3">@_errorLote</MudAlert>
+        }
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick='() => { _showConfirmLote = false; _errorLote = ""; }'>Cancelar</MudButton>
+        <MudButton Color="Color.Error" Variant="Variant.Filled" OnClick="EjecutarEliminarLote">
+            Eliminar
+        </MudButton>
+    </DialogActions>
+</MudDialog>
 
 <MudDialog @bind-Visible="_showConfirm">
     <TitleContent>

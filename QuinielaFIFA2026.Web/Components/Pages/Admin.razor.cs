@@ -14,6 +14,33 @@ public partial class Admin
     private bool _showConfirm = false;
     private Planilla? _planillaSeleccionada;
 
+    private bool _showConfirmLote = false;
+    private Lote? _loteSeleccionado;
+    private string _errorLote = "";
+    
+    private void ConfirmarEliminarLote(Lote lote)
+    {
+        _loteSeleccionado = lote;
+        _showConfirmLote = true;
+    }
+    
+    private async Task EjecutarEliminarLote()
+    {
+        if (_loteSeleccionado is null) return;
+        var resultado = await QuinielaService.EliminarLoteAsync(_loteSeleccionado.Id);
+        if (resultado.Exito)
+        {
+            _lotes = await QuinielaService.GetLotesAsync();
+            _showConfirmLote = false;
+            _loteSeleccionado = null;
+            _errorLote = "";
+        }
+        else
+        {
+            _errorLote = resultado.Mensaje;
+        }
+    }
+    
     protected override async Task OnInitializedAsync()
     {
         if (!Session.IsLoggedIn || !Session.IsAdmin)
