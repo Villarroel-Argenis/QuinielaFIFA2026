@@ -8,15 +8,15 @@ public class QuinielaService(AppDbContext db)
             .FirstOrDefaultAsync(u => u.Username == username.Trim());
 
         if (user is not null) return user;
-        
+
         user = new User { Username = username.Trim() };
         db.Users.Add(user);
         await db.SaveChangesAsync();
 
         return user;
     }
-    
-   
+
+
     public async Task<List<Planilla>> GetUserPlanillasAsync(int userId)
     {
         return await db.Planillas
@@ -34,7 +34,7 @@ public class QuinielaService(AppDbContext db)
             .OrderByDescending(p => p.AssignedAt)
             .ToListAsync();
     }
-    
+
     public async Task<(bool Exito, string Mensaje)> VincularPlanillaAsync(string codigo, int userId)
     {
         var planilla = await db.Planillas
@@ -53,7 +53,7 @@ public class QuinielaService(AppDbContext db)
         return (true, "");
     }
 
-  
+
     public async Task<Lote> GenerarLoteAsync(int cantidad)
     {
         var lote = new Lote
@@ -97,8 +97,8 @@ public class QuinielaService(AppDbContext db)
         var numero = Random.Shared.Next(10000000, 99999999);
         return $"P-{numero}";
     }
-    
-    
+
+
     public async Task DesvincularPlanillaAsync(int planillaId)
     {
         var planilla = await db.Planillas
@@ -110,7 +110,7 @@ public class QuinielaService(AppDbContext db)
         planilla.AssignedAt = null;
         await db.SaveChangesAsync();
     }
-    
+
     public async Task<(bool Exito, string Mensaje)> EliminarLoteAsync(int loteId)
     {
         var lote = await db.Lotes
@@ -128,7 +128,7 @@ public class QuinielaService(AppDbContext db)
 
         return (true, "Lote eliminado correctamente.");
     }
-    
+
     public bool IsQuinielaBloqueada(IConfiguration config)
     {
         var fechaStr = config["QuinielaSettings:FechaBloqueo"];
@@ -154,7 +154,7 @@ public class QuinielaService(AppDbContext db)
             .ToList();
     }
 
-    public async Task SavePredictionAsync(int planillaId, int matchId, string result)
+    public async Task SavePredictionAsync(int planillaId, int matchId, string? result)
     {
         var pred = await db.Predictions
             .FirstOrDefaultAsync(p => p.PlanillaId == planillaId && p.MatchId == matchId);
@@ -169,13 +169,13 @@ public class QuinielaService(AppDbContext db)
         pred.UpdatedAt = DateTime.UtcNow;
         await db.SaveChangesAsync();
     }
-    
+
     public async Task<Planilla?> GetPlanillaAsync(int planillaId, int userId)
     {
         return await db.Planillas
             .FirstOrDefaultAsync(p => p.Id == planillaId && p.UserId == userId);
     }
-    
+
     public async Task<List<LeaderboardEntry>> GetTablaAsync(IConfiguration config)
     {
         var planillas = await db.Planillas
@@ -216,17 +216,57 @@ public class QuinielaService(AppDbContext db)
         var key = stage.Replace(" ", "") switch
         {
             "Dieciseisavos" => "Dieciseisavos",
-            "Octavos"       => "Octavos",
-            "Cuartos"       => "Cuartos",
-            "Semifinal"     => "Semifinal",
-            "TercerLugar"   => "TercerLugar",
-            "Final"         => "Final",
-            _               => "Grupo"
+            "Octavos" => "Octavos",
+            "Cuartos" => "Cuartos",
+            "Semifinal" => "Semifinal",
+            "TercerLugar" => "TercerLugar",
+            "Final" => "Final",
+            _ => "Grupo"
         };
 
         return config.GetValue<int>($"QuinielaSettings:Puntos:{key}", 1);
     }
-    
+
+    public async Task<List<PrediccionClasificacion>> GetPrediccionesClasificacionAsync(int planillaId)
+    {
+        return await db.PrediccionesClasificacion
+            .Where(p => p.PlanillaId == planillaId)
+            .ToListAsync();
+    }
+
+    public async Task SavePrediccionClasificacionAsync(int planillaId, string slot, string equipo)
+    {
+        var pred = await db.PrediccionesClasificacion
+            .FirstOrDefaultAsync(p => p.PlanillaId == planillaId && p.Slot == slot);
+
+        if (pred is null)
+        {
+            pred = new PrediccionClasificacion { PlanillaId = planillaId, Slot = slot };
+            db.PrediccionesClasificacion.Add(pred);
+        }
+
+        pred.EquipoElegido = equipo;
+        pred.UpdatedAt = DateTime.UtcNow;
+        await db.SaveChangesAsync();
+    }
+
+    public async Task ReiniciarPlanillaAsync(int planillaId)
+    {
+        var predictions = await db.Predictions
+            .Where(p => p.PlanillaId == planillaId)
+            .ToListAsync();
+
+        foreach (var pred in predictions)
+            pred.PredictedResult = null;
+
+        var clasificaciones = await db.PrediccionesClasificacion
+            .Where(p => p.PlanillaId == planillaId)
+            .ToListAsync();
+
+        db.PrediccionesClasificacion.RemoveRange(clasificaciones);
+        await db.SaveChangesAsync();
+    }
+
 }
 
 public class LeaderboardEntry

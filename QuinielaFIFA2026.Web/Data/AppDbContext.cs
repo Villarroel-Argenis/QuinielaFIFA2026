@@ -8,6 +8,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<Prediction> Predictions { get; set; }
     public DbSet<MatchResult> MatchResults { get; set; }
     public DbSet<Lote> Lotes { get; set; }
+    public DbSet<PrediccionClasificacion> PrediccionesClasificacion { get; set; }
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

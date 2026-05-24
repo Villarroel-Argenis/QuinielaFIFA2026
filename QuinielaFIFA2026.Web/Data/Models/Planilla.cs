@@ -13,4 +13,5 @@ public class Planilla
     public DateTime? AssignedAt { get; set; }
     public DateTime? ActivatedAt { get; set; }
     public ICollection<Prediction> Predictions { get; set; } = new List<Prediction>();
+    public ICollection<PrediccionClasificacion> PrediccionesClasificacion { get; set; } = new List<PrediccionClasificacion>();
 }
