@@ -10,59 +10,59 @@ public static class SeedService
         await db.SaveChangesAsync();
     }
 
-public static async Task UpdateSlotsAsync(AppDbContext db)
-{
-    var slots = new Dictionary<string, (string Home, string Away)>
+    public static async Task UpdateSlotsAsync(AppDbContext db)
     {
-        // Dieciseisavos
-        ["M73"] = ("2A",     "2B"),
-        ["M74"] = ("1E",     "3ABCDF"),
-        ["M75"] = ("1F",     "2C"),
-        ["M76"] = ("1C",     "3DEIJL"),
-        ["M77"] = ("1I",     "1J"),
-        ["M78"] = ("1D",     "3EFGIJ"),
-        ["M79"] = ("1G",     "1H"),
-        ["M80"] = ("1L",     "3EHIJK"),
-        ["M81"] = ("1D",     "3BEFIJ"),
-        ["M82"] = ("1B",     "3DEIJL"),
-        ["M83"] = ("2K",     "2L"),
-        ["M84"] = ("2H",     "2J"),
-        ["M85"] = ("3EFGIJ", "1K"),
-        ["M86"] = ("1J",     "2H"),
-        ["M87"] = ("1A",     "3CEFHI"),
-        ["M88"] = ("1G",     "3AEHIJ"),
-        // Octavos
-        ["M89"]  = ("W74",  "W77"),
-        ["M90"]  = ("W73",  "W75"),
-        ["M91"]  = ("W76",  "W79"),
-        ["M92"]  = ("W80",  "W78"),
-        ["M93"]  = ("W81",  "W84"),
-        ["M94"]  = ("W82",  "W85"),
-        ["M95"]  = ("W86",  "W88"),
-        ["M96"]  = ("W83",  "W87"),
-        // Cuartos
-        ["M97"]  = ("W89",  "W90"),
-        ["M98"]  = ("W93",  "W94"),
-        ["M99"]  = ("W91",  "W92"),
-        ["M100"] = ("W95",  "W96"),
-        // Semifinales
-        ["M101"] = ("W97",  "W98"),
-        ["M102"] = ("W99",  "W100"),
-        // Tercer lugar y Final
-        ["M103"] = ("RU101", "RU102"),
-        ["M104"] = ("W101",  "W102"),
-    };
+        var slots = new Dictionary<string, (string Home, string Away)>
+        {
+            // Dieciseisavos
+            ["M73"] = ("2A", "2B"),
+            ["M74"] = ("1E", "3ABCDF"),
+            ["M75"] = ("1F", "2C"),
+            ["M76"] = ("1C", "2F"),
+            ["M77"] = ("1I", "3CDFGH"),
+            ["M78"] = ("2E", "2I"),
+            ["M79"] = ("1A", "3CEFHI"),
+            ["M80"] = ("1L", "3EHIJK"),
+            ["M81"] = ("1D", "3BEFIJ"),
+            ["M82"] = ("1G", "3AEHIJ"),
+            ["M83"] = ("2K", "2L"),
+            ["M84"] = ("1H", "2J"),
+            ["M85"] = ("1B", "3EFGIJ"),
+            ["M86"] = ("1J", "2H"),
+            ["M87"] = ("1K", "3DEIJL"),
+            ["M88"] = ("2D", "2G"),
+            // Octavos
+            ["M89"] = ("W74", "W77"),
+            ["M90"] = ("W73", "W75"),
+            ["M91"] = ("W76", "W79"),
+            ["M92"] = ("W80", "W78"),
+            ["M93"] = ("W81", "W84"),
+            ["M94"] = ("W82", "W85"),
+            ["M95"] = ("W86", "W88"),
+            ["M96"] = ("W83", "W87"),
+            // Cuartos
+            ["M97"] = ("W89", "W90"),
+            ["M98"] = ("W93", "W94"),
+            ["M99"] = ("W91", "W92"),
+            ["M100"] = ("W95", "W96"),
+            // Semifinales
+            ["M101"] = ("W97", "W98"),
+            ["M102"] = ("W99", "W100"),
+            // Tercer lugar y Final
+            ["M103"] = ("RU101", "RU102"),
+            ["M104"] = ("W101", "W102"),
+        };
 
-    foreach (var (matchNumber, (home, away)) in slots)
-    {
-        var match = await db.Matches.FirstOrDefaultAsync(m => m.MatchNumber == matchNumber);
-        if (match is null) continue;
-        match.HomeSlot = home;
-        match.AwaySlot = away;
+        foreach (var (matchNumber, (home, away)) in slots)
+        {
+            var match = await db.Matches.FirstOrDefaultAsync(m => m.MatchNumber == matchNumber);
+            if (match is null) continue;
+            match.HomeSlot = home;
+            match.AwaySlot = away;
+        }
+
+        await db.SaveChangesAsync();
     }
-
-    await db.SaveChangesAsync();
-}
 
     private static List<Match> GetMatches() => new()
     {
@@ -166,19 +166,19 @@ public static async Task UpdateSlotsAsync(AppDbContext db)
         new() { MatchNumber="M73", Stage="Dieciseisavos", HomeTeam="TBD", HomeFlagEmoji="🏳", AwayTeam="TBD", AwayFlagEmoji="🏳", HomeSlot="2A",     AwaySlot="2B",     MatchDateUtc=new DateTime(2026,6,28,23,0,0,DateTimeKind.Utc), Venue="Los Ángeles",      AllowDraw=false },
         new() { MatchNumber="M74", Stage="Dieciseisavos", HomeTeam="TBD", HomeFlagEmoji="🏳", AwayTeam="TBD", AwayFlagEmoji="🏳", HomeSlot="1E",     AwaySlot="3ABCDF", MatchDateUtc=new DateTime(2026,6,29,19,0,0,DateTimeKind.Utc), Venue="Houston",           AllowDraw=false },
         new() { MatchNumber="M75", Stage="Dieciseisavos", HomeTeam="TBD", HomeFlagEmoji="🏳", AwayTeam="TBD", AwayFlagEmoji="🏳", HomeSlot="1F",     AwaySlot="2C",     MatchDateUtc=new DateTime(2026,6,29,22,30,0,DateTimeKind.Utc), Venue="Boston",           AllowDraw=false },
-        new() { MatchNumber="M76", Stage="Dieciseisavos", HomeTeam="TBD", HomeFlagEmoji="🏳", AwayTeam="TBD", AwayFlagEmoji="🏳", HomeSlot="1C",     AwaySlot="3DEIJL", MatchDateUtc=new DateTime(2026,6,30, 3,0,0,DateTimeKind.Utc), Venue="Monterrey",         AllowDraw=false },
-        new() { MatchNumber="M77", Stage="Dieciseisavos", HomeTeam="TBD", HomeFlagEmoji="🏳", AwayTeam="TBD", AwayFlagEmoji="🏳", HomeSlot="1I",     AwaySlot="1J",     MatchDateUtc=new DateTime(2026,6,30,19,0,0,DateTimeKind.Utc), Venue="Dallas",            AllowDraw=false },
-        new() { MatchNumber="M78", Stage="Dieciseisavos", HomeTeam="TBD", HomeFlagEmoji="🏳", AwayTeam="TBD", AwayFlagEmoji="🏳", HomeSlot="1D",     AwaySlot="3EFGIJ", MatchDateUtc=new DateTime(2026,6,30,22,0,0,DateTimeKind.Utc), Venue="Nueva York/NJ",    AllowDraw=false },
-        new() { MatchNumber="M79", Stage="Dieciseisavos", HomeTeam="TBD", HomeFlagEmoji="🏳", AwayTeam="TBD", AwayFlagEmoji="🏳", HomeSlot="1G",     AwaySlot="1H",     MatchDateUtc=new DateTime(2026,7, 1, 3,0,0,DateTimeKind.Utc), Venue="Ciudad de México",  AllowDraw=false },
+        new() { MatchNumber="M76", Stage="Dieciseisavos", HomeTeam="TBD", HomeFlagEmoji="🏳", AwayTeam="TBD", AwayFlagEmoji="🏳", HomeSlot="1C",     AwaySlot="2F",     MatchDateUtc=new DateTime(2026,6,30, 3,0,0,DateTimeKind.Utc), Venue="Monterrey",         AllowDraw=false },
+        new() { MatchNumber="M77", Stage="Dieciseisavos", HomeTeam="TBD", HomeFlagEmoji="🏳", AwayTeam="TBD", AwayFlagEmoji="🏳", HomeSlot="1I",     AwaySlot="3CDFGH", MatchDateUtc=new DateTime(2026,6,30,19,0,0,DateTimeKind.Utc), Venue="Dallas",            AllowDraw=false },
+        new() { MatchNumber="M78", Stage="Dieciseisavos", HomeTeam="TBD", HomeFlagEmoji="🏳", AwayTeam="TBD", AwayFlagEmoji="🏳", HomeSlot="2E",     AwaySlot="2I",     MatchDateUtc=new DateTime(2026,6,30,22,0,0,DateTimeKind.Utc), Venue="Nueva York/NJ",    AllowDraw=false },
+        new() { MatchNumber="M79", Stage="Dieciseisavos", HomeTeam="TBD", HomeFlagEmoji="🏳", AwayTeam="TBD", AwayFlagEmoji="🏳", HomeSlot="1A",     AwaySlot="3CEFHI", MatchDateUtc=new DateTime(2026,7, 1, 3,0,0,DateTimeKind.Utc), Venue="Ciudad de México",  AllowDraw=false },
         new() { MatchNumber="M80", Stage="Dieciseisavos", HomeTeam="TBD", HomeFlagEmoji="🏳", AwayTeam="TBD", AwayFlagEmoji="🏳", HomeSlot="1L",     AwaySlot="3EHIJK", MatchDateUtc=new DateTime(2026,7, 1,17,0,0,DateTimeKind.Utc), Venue="Atlanta",           AllowDraw=false },
         new() { MatchNumber="M81", Stage="Dieciseisavos", HomeTeam="TBD", HomeFlagEmoji="🏳", AwayTeam="TBD", AwayFlagEmoji="🏳", HomeSlot="1D",     AwaySlot="3BEFIJ", MatchDateUtc=new DateTime(2026,7, 1,21,0,0,DateTimeKind.Utc), Venue="Seattle",           AllowDraw=false },
-        new() { MatchNumber="M82", Stage="Dieciseisavos", HomeTeam="TBD", HomeFlagEmoji="🏳", AwayTeam="TBD", AwayFlagEmoji="🏳", HomeSlot="1B",     AwaySlot="3DEIJL", MatchDateUtc=new DateTime(2026,7, 2, 1,0,0,DateTimeKind.Utc), Venue="San Francisco",     AllowDraw=false },
+        new() { MatchNumber="M82", Stage="Dieciseisavos", HomeTeam="TBD", HomeFlagEmoji="🏳", AwayTeam="TBD", AwayFlagEmoji="🏳", HomeSlot="1G",     AwaySlot="3AEHIJ", MatchDateUtc=new DateTime(2026,7, 2, 1,0,0,DateTimeKind.Utc), Venue="San Francisco",     AllowDraw=false },
         new() { MatchNumber="M83", Stage="Dieciseisavos", HomeTeam="TBD", HomeFlagEmoji="🏳", AwayTeam="TBD", AwayFlagEmoji="🏳", HomeSlot="2K",     AwaySlot="2L",     MatchDateUtc=new DateTime(2026,7, 2,23,0,0,DateTimeKind.Utc), Venue="Los Ángeles",      AllowDraw=false },
-        new() { MatchNumber="M84", Stage="Dieciseisavos", HomeTeam="TBD", HomeFlagEmoji="🏳", AwayTeam="TBD", AwayFlagEmoji="🏳", HomeSlot="2H",     AwaySlot="2J",     MatchDateUtc=new DateTime(2026,7, 3, 1,0,0,DateTimeKind.Utc), Venue="Toronto",           AllowDraw=false },
-        new() { MatchNumber="M85", Stage="Dieciseisavos", HomeTeam="TBD", HomeFlagEmoji="🏳", AwayTeam="TBD", AwayFlagEmoji="🏳", HomeSlot="3EFGIJ", AwaySlot="1K",     MatchDateUtc=new DateTime(2026,7, 3, 7,0,0,DateTimeKind.Utc), Venue="Vancouver",         AllowDraw=false },
+        new() { MatchNumber="M84", Stage="Dieciseisavos", HomeTeam="TBD", HomeFlagEmoji="🏳", AwayTeam="TBD", AwayFlagEmoji="🏳", HomeSlot="1H",     AwaySlot="2J",     MatchDateUtc=new DateTime(2026,7, 3, 1,0,0,DateTimeKind.Utc), Venue="Toronto",           AllowDraw=false },
+        new() { MatchNumber="M85", Stage="Dieciseisavos", HomeTeam="TBD", HomeFlagEmoji="🏳", AwayTeam="TBD", AwayFlagEmoji="🏳", HomeSlot="1B",     AwaySlot="3EFGIJ", MatchDateUtc=new DateTime(2026,7, 3, 7,0,0,DateTimeKind.Utc), Venue="Vancouver",         AllowDraw=false },
         new() { MatchNumber="M86", Stage="Dieciseisavos", HomeTeam="TBD", HomeFlagEmoji="🏳", AwayTeam="TBD", AwayFlagEmoji="🏳", HomeSlot="1J",     AwaySlot="2H",     MatchDateUtc=new DateTime(2026,7, 3,21,0,0,DateTimeKind.Utc), Venue="Dallas",            AllowDraw=false },
-        new() { MatchNumber="M87", Stage="Dieciseisavos", HomeTeam="TBD", HomeFlagEmoji="🏳", AwayTeam="TBD", AwayFlagEmoji="🏳", HomeSlot="1A",     AwaySlot="3CEFHI", MatchDateUtc=new DateTime(2026,7, 3,23,0,0,DateTimeKind.Utc), Venue="Miami",             AllowDraw=false },
-        new() { MatchNumber="M88", Stage="Dieciseisavos", HomeTeam="TBD", HomeFlagEmoji="🏳", AwayTeam="TBD", AwayFlagEmoji="🏳", HomeSlot="1G",     AwaySlot="3AEHIJ", MatchDateUtc=new DateTime(2026,7, 4, 3,30,0,DateTimeKind.Utc), Venue="Kansas City",      AllowDraw=false },
+        new() { MatchNumber="M87", Stage="Dieciseisavos", HomeTeam="TBD", HomeFlagEmoji="🏳", AwayTeam="TBD", AwayFlagEmoji="🏳", HomeSlot="1K",     AwaySlot="3DEIJL", MatchDateUtc=new DateTime(2026,7, 3,23,0,0,DateTimeKind.Utc), Venue="Miami",             AllowDraw=false },
+        new() { MatchNumber="M88", Stage="Dieciseisavos", HomeTeam="TBD", HomeFlagEmoji="🏳", AwayTeam="TBD", AwayFlagEmoji="🏳", HomeSlot="2D",     AwaySlot="2G",     MatchDateUtc=new DateTime(2026,7, 4, 3,30,0,DateTimeKind.Utc), Venue="Kansas City",      AllowDraw=false },
 
         // ── OCTAVOS ──
         new() { MatchNumber="M89",  Stage="Octavos", HomeTeam="TBD", HomeFlagEmoji="🏳", AwayTeam="TBD", AwayFlagEmoji="🏳", HomeSlot="W74", AwaySlot="W77", MatchDateUtc=new DateTime(2026,7, 4,19,0,0,DateTimeKind.Utc), Venue="Houston",       AllowDraw=false },

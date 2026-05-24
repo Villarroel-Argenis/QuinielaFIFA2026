@@ -71,19 +71,19 @@ public static class SlotService
         ["M73"] = ("2A", "2B"),
         ["M74"] = ("1E", "3ABCDF"),
         ["M75"] = ("1F", "2C"),
-        ["M76"] = ("1C", "3DEIJL"),
-        ["M77"] = ("1I", "1J"),
-        ["M78"] = ("1D", "3EFGIJ"),
-        ["M79"] = ("1G", "1H"),
+        ["M76"] = ("1C", "2F"),
+        ["M77"] = ("1I", "3CDFGH"),
+        ["M78"] = ("2E", "2I"),
+        ["M79"] = ("1A", "3CEFHI"),
         ["M80"] = ("1L", "3EHIJK"),
         ["M81"] = ("1D", "3BEFIJ"),
-        ["M82"] = ("1B", "3DEIJL"),
+        ["M82"] = ("1G", "3AEHIJ"),
         ["M83"] = ("2K", "2L"),
-        ["M84"] = ("2H", "2J"),
-        ["M85"] = ("3EFGIJ", "1K"),
+        ["M84"] = ("1H", "2J"),
+        ["M85"] = ("1B", "3EFGIJ"),
         ["M86"] = ("1J", "2H"),
-        ["M87"] = ("1A", "3CEFHI"),
-        ["M88"] = ("1G", "3AEHIJ"),
+        ["M87"] = ("1K", "3DEIJL"),
+        ["M88"] = ("2D", "2G"),
     };
 
     private static readonly Dictionary<string, string> Banderas = new()
@@ -140,4 +140,12 @@ public static class SlotService
 
     public static string GetBandera(string equipo) =>
         Banderas.TryGetValue(equipo, out var bandera) ? bandera : "🏳";
+
+    public static List<string> GetEquiposPosibles(string slot, IEnumerable<string>? excluir = null)
+    {
+        var candidatos = GetEquiposPosibles(slot);
+        if (excluir == null) return candidatos;
+        var set = new HashSet<string>(excluir);
+        return candidatos.Where(e => !set.Contains(e)).ToList();
+    }
 }

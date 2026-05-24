@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("QuinielaFIFA2026.Web")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+5dc2104c8a852284c314f8abf59184c3e643326f")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+be2e3af0d1492e1bc63e3c4a62d648138997cf31")]
 [assembly: System.Reflection.AssemblyProductAttribute("QuinielaFIFA2026.Web")]
 [assembly: System.Reflection.AssemblyTitleAttribute("QuinielaFIFA2026.Web")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
