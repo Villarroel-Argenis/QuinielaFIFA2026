@@ -19,4 +19,8 @@ public class Match
     public bool HasTeams => HomeTeam != "TBD" && AwayTeam != "TBD";
     public string HomeFlagEmoji { get; set; } = "";
     public string AwayFlagEmoji { get; set; } = "";
+    
+    public string? HomeSlot { get; set; }   // "1A", "2B", "3ABCDF", "W73" etc.
+    public string? AwaySlot { get; set; }
+    
 }
