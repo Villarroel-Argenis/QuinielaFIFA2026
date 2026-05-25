@@ -481,6 +481,5 @@ $RECYCLE.BIN/
 # Vim temporary swap files
 *.swp
 
-# Bibary folder 
-**/bin/
-**/obj/
+bin/
+obj/

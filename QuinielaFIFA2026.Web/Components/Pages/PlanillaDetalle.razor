@@ -74,11 +74,11 @@
                                     <div class="mud-text-secondary" style="font-size:0.75rem">
                                         @FormatHora(context.Match.MatchDateUtc)</div>
                                     </MudTd>
-                                    <MudTd Style="text-align:right">
+                                    <MudTd Style="text-align:right; font-size: 1.4rem">
                                         @context.Match.HomeFlagEmoji @context.Match.HomeTeam
                                     </MudTd>
                                     <MudTd Style="text-align:center; color: #2E7D32; font-weight:bold;">@@</MudTd>
-                                    <MudTd>
+                                    <MudTd Style="font-size: 1.4rem">
                                         @context.Match.AwayFlagEmoji @context.Match.AwayTeam
                                     </MudTd>
                                     <MudTd Style="text-align:center">
@@ -136,7 +136,7 @@
                                         <MudTh Style="text-align:center"></MudTh>
                                         <MudTh>Visitante</MudTh>
                                         <MudTh Style="text-align:center">L</MudTh>
-                                        <MudTh Style="text-align:center">E</MudTh>
+                                        <MudTh Style="text-align:center"></MudTh>
                                         <MudTh Style="text-align:center">V</MudTh>
                                     </HeaderContent>
                                     <RowTemplate>
@@ -148,34 +148,49 @@
                                             </MudTd>
 
                                             <!-- Local -->
-                                            <MudTd Style="text-align:right">
+                                            <MudTd Style="text-align:right; font-size: 1.4rem">
                                                 @if (!string.IsNullOrEmpty(context.Match.HomeSlot))
                                                 {
                                                     <div class="mud-text-secondary" style="font-size:0.75rem">
                                                         @SlotService.GetDescripcion(context.Match.HomeSlot)
                                                     </div>
-                                                    @if (!string.IsNullOrEmpty(GetClasificacion(context.Match.HomeSlot)))
+                                                    @if (IsAutoSlot(context.Match.HomeSlot))
                                                     {
-                                                        <div class="d-flex align-center justify-end gap-1">
-                                                            <span>@SlotService.GetBandera(GetClasificacion(context.Match.HomeSlot)!)</span>
-                                                            <span>@GetClasificacion(context.Match.HomeSlot)</span>
-                                                            @if (!_bloqueada)
-                                                            {
-                                                                <MudIconButton Icon="@Icons.Material.Filled.Close" Size="Size.Small"
-                                                                               OnClick='() => SaveClasificacion(context.Match.HomeSlot!, "")' />
-                                                            }
-                                                        </div>
+                                                        // W73, W74... se resuelven automáticamente
+                                                        var resolved = ResolveSlot(context.Match.HomeSlot);
+                                                        @if (!string.IsNullOrEmpty(resolved))
+                                                        {
+                                                            <div class="d-flex align-center justify-end gap-1">
+                                                                <span style="font-size:1.4rem">@SlotService.GetBandera(resolved)</span>
+                                                                <span style="font-size:1.1rem">@resolved</span>
+                                                            </div>
+                                                        }
                                                     }
-                                                    @if (!_bloqueada)
+                                                    else
                                                     {
-                                                        <MudSelect T="string" Value="@GetClasificacion(context.Match.HomeSlot)"
-                                                                   ValueChanged='v => SaveClasificacion(context.Match.HomeSlot!, v)' Dense="true"
-                                                                   Margin="Margin.Dense" Placeholder="@SlotService.GetDescripcion(context.Match.HomeSlot)">
-                                                            @foreach (var eq in GetEquiposDisponibles(context.Match.HomeSlot!))
-                                                            {
-                                                                <MudSelectItem Value="@eq">@eq</MudSelectItem>
-                                                            }
-                                                        </MudSelect>
+                                                        @if (!string.IsNullOrEmpty(GetClasificacion(context.Match.HomeSlot)))
+                                                        {
+                                                            <div class="d-flex align-center justify-end gap-1">
+                                                                <span>@SlotService.GetBandera(GetClasificacion(context.Match.HomeSlot)!)</span>
+                                                                <span>@GetClasificacion(context.Match.HomeSlot)</span>
+                                                                @if (!_bloqueada)
+                                                                {
+                                                                    <MudIconButton Icon="@Icons.Material.Filled.Close" Size="Size.Small"
+                                                                                   OnClick='() => SaveClasificacion(context.Match.HomeSlot!, "")' />
+                                                                }
+                                                            </div>
+                                                        }
+                                                        @if (!_bloqueada && string.IsNullOrEmpty(GetClasificacion(context.Match.HomeSlot)))
+                                                        {
+                                                            <MudSelect T="string" Value="@GetClasificacion(context.Match.HomeSlot)"
+                                                                       ValueChanged='v => SaveClasificacion(context.Match.HomeSlot!, v)' Dense="true"
+                                                                       Margin="Margin.Dense" Placeholder="@SlotService.GetDescripcion(context.Match.HomeSlot)">
+                                                                @foreach (var eq in GetEquiposDisponibles(context.Match.HomeSlot!))
+                                                                {
+                                                                    <MudSelectItem Value="@eq">@eq</MudSelectItem>
+                                                                }
+                                                            </MudSelect>
+                                                        }
                                                     }
                                                 }
                                                 else
@@ -187,34 +202,49 @@
                                             <MudTd Style="text-align:center; color: #2E7D32; font-weight:bold;">@@</MudTd>
 
                                             <!-- Visitante -->
-                                            <MudTd>
+                                            <MudTd Style="font-size: 1.4rem">
                                                 @if (!string.IsNullOrEmpty(context.Match.AwaySlot))
                                                 {
                                                     <div class="mud-text-secondary" style="font-size:0.75rem">
                                                         @SlotService.GetDescripcion(context.Match.AwaySlot)
                                                     </div>
-                                                    @if (!string.IsNullOrEmpty(GetClasificacion(context.Match.AwaySlot)))
+                                                    @if (IsAutoSlot(context.Match.AwaySlot))
                                                     {
-                                                        <div class="d-flex align-center gap-1">
-                                                            <span>@SlotService.GetBandera(GetClasificacion(context.Match.AwaySlot)!)</span>
-                                                            <span>@GetClasificacion(context.Match.AwaySlot)</span>
-                                                            @if (!_bloqueada)
-                                                            {
-                                                                <MudIconButton Icon="@Icons.Material.Filled.Close" Size="Size.Small"
-                                                                               OnClick='() => SaveClasificacion(context.Match.AwaySlot!, "")' />
-                                                            }
-                                                        </div>
+                                                        // W73, W74... se resuelven automáticamente
+                                                        var resolved = ResolveSlot(context.Match.AwaySlot);
+                                                        @if (!string.IsNullOrEmpty(resolved))
+                                                        {
+                                                            <div class="d-flex align-center gap-1">
+                                                                <span style="font-size:1.4rem">@SlotService.GetBandera(resolved)</span>
+                                                                <span style="font-size:1.1rem">@resolved</span>
+                                                            </div>
+                                                        }
                                                     }
-                                                    @if (!_bloqueada)
+                                                    else
                                                     {
-                                                        <MudSelect T="string" Value="@GetClasificacion(context.Match.AwaySlot)"
-                                                                   ValueChanged='v => SaveClasificacion(context.Match.AwaySlot!, v)' Dense="true"
-                                                                   Margin="Margin.Dense" Placeholder="@SlotService.GetDescripcion(context.Match.AwaySlot)">
-                                                            @foreach (var eq in GetEquiposDisponibles(context.Match.AwaySlot!))
-                                                            {
-                                                                <MudSelectItem Value="@eq">@eq</MudSelectItem>
-                                                            }
-                                                        </MudSelect>
+                                                        @if (!string.IsNullOrEmpty(GetClasificacion(context.Match.AwaySlot)))
+                                                        {
+                                                            <div class="d-flex align-center gap-1">
+                                                                <span>@SlotService.GetBandera(GetClasificacion(context.Match.AwaySlot)!)</span>
+                                                                <span>@GetClasificacion(context.Match.AwaySlot)</span>
+                                                                @if (!_bloqueada)
+                                                                {
+                                                                    <MudIconButton Icon="@Icons.Material.Filled.Close" Size="Size.Small"
+                                                                                   OnClick='() => SaveClasificacion(context.Match.AwaySlot!, "")' />
+                                                                }
+                                                            </div>
+                                                        }
+                                                        @if (!_bloqueada && string.IsNullOrEmpty(@GetClasificacion(context.Match.AwaySlot)))
+                                                        {
+                                                            <MudSelect T="string" Value="@GetClasificacion(context.Match.AwaySlot)"
+                                                                       ValueChanged='v => SaveClasificacion(context.Match.AwaySlot!, v)' Dense="true"
+                                                                       Margin="Margin.Dense" Placeholder="@SlotService.GetDescripcion(context.Match.AwaySlot)">
+                                                                @foreach (var eq in GetEquiposDisponibles(context.Match.AwaySlot!))
+                                                                {
+                                                                    <MudSelectItem Value="@eq">@eq</MudSelectItem>
+                                                                }
+                                                            </MudSelect>
+                                                        }
                                                     }
                                                 }
                                                 else
