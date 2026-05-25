@@ -12,7 +12,8 @@ public partial class PlanillaDetalle
     private Planilla? _planilla;
     private List<(Match Match, Prediction? Pred)> _matchData = new();
     private List<PrediccionClasificacion> _prediccionesClasificacion = new();
-    private List<string> _stages = new();
+    private List<(DateTime Fecha, List<(Match Match, Prediction? Pred)> Partidos)> _gruposPorFecha = new();
+    private List<string> _stagesEliminatorias = new();
     private bool _bloqueada = false;
     private bool _showConfirmReinicio = false;
 
@@ -39,14 +40,20 @@ public partial class PlanillaDetalle
         _matchData = await QuinielaService.GetPlanillaMatchesAsync(PlanillaId);
         _prediccionesClasificacion = await QuinielaService.GetPrediccionesClasificacionAsync(PlanillaId);
 
+        _gruposPorFecha = _matchData
+            .Where(m => m.Match.Stage.StartsWith("Grupo"))
+            .GroupBy(m => m.Match.MatchDateUtc.Date)
+            .OrderBy(g => g.Key)
+            .Select(g => (Fecha: g.Key, Partidos: g.ToList()))
+            .ToList();
+
         var stagesOrden = new List<string>
         {
-            "Grupo A", "Grupo B", "Grupo C", "Grupo D", "Grupo E", "Grupo F",
-            "Grupo G", "Grupo H", "Grupo I", "Grupo J", "Grupo K", "Grupo L",
             "Dieciseisavos", "Octavos", "Cuartos", "Semifinal", "Tercer Lugar", "Final"
         };
 
-        _stages = _matchData
+        _stagesEliminatorias = _matchData
+            .Where(m => !m.Match.Stage.StartsWith("Grupo"))
             .Select(m => m.Match.Stage)
             .Distinct()
             .OrderBy(s => stagesOrden.IndexOf(s))
@@ -58,6 +65,13 @@ public partial class PlanillaDetalle
         if (_bloqueada) return;
         await QuinielaService.SavePredictionAsync(PlanillaId, matchId, result);
         _matchData = await QuinielaService.GetPlanillaMatchesAsync(PlanillaId);
+
+        _gruposPorFecha = _matchData
+            .Where(m => m.Match.Stage.StartsWith("Grupo"))
+            .GroupBy(m => m.Match.MatchDateUtc.Date)
+            .OrderBy(g => g.Key)
+            .Select(g => (Fecha: g.Key, Partidos: g.ToList()))
+            .ToList();
     }
 
     private async Task SaveClasificacion(string slot, string equipo)
@@ -88,7 +102,26 @@ public partial class PlanillaDetalle
         await QuinielaService.ReiniciarPlanillaAsync(PlanillaId);
         _matchData = await QuinielaService.GetPlanillaMatchesAsync(PlanillaId);
         _prediccionesClasificacion = await QuinielaService.GetPrediccionesClasificacionAsync(PlanillaId);
+
+        _gruposPorFecha = _matchData
+            .Where(m => m.Match.Stage.StartsWith("Grupo"))
+            .GroupBy(m => m.Match.MatchDateUtc.Date)
+            .OrderBy(g => g.Key)
+            .Select(g => (Fecha: g.Key, Partidos: g.ToList()))
+            .ToList();
+
         _showConfirmReinicio = false;
         StateHasChanged();
+    }
+
+    private string FormatFecha(DateTime fecha)
+    {
+        var cultura = new CultureInfo("es-ES");
+        return fecha.ToString("dddd d 'de' MMMM yyyy", cultura);
+    }
+
+    private string FormatHora(DateTime fechaUtc)
+    {
+        return fechaUtc.ToString("hh:mm tt", new CultureInfo("en-US"));
     }
 }

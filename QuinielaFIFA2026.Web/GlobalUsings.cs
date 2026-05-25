@@ -1,26 +1,17 @@
 // Global using directives
 
-global using System.Diagnostics;
-global using System.Net.Http;
-global using System.Net.Http.Json;
+global using System.Globalization;
 global using Microsoft.AspNetCore.Components;
-global using Microsoft.AspNetCore.Components.Forms;
-global using Microsoft.AspNetCore.Components.Routing;
 global using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 global using Microsoft.AspNetCore.Components.Web;
-global using Microsoft.AspNetCore.Components.Web.Virtualization;
 global using Microsoft.EntityFrameworkCore;
-global using Microsoft.JSInterop;
 global using MudBlazor;
 global using MudBlazor.Services;
 global using QuestPDF.Fluent;
 global using QuestPDF.Helpers;
 global using QuestPDF.Infrastructure;
-global using QuinielaFIFA2026.Web;
 global using QuinielaFIFA2026.Web.Components;
-global using QuinielaFIFA2026.Web.Components.Layout;
 global using QuinielaFIFA2026.Web.Data;
 global using QuinielaFIFA2026.Web.Data.Models;
 global using QuinielaFIFA2026.Web.Endpoints;
 global using QuinielaFIFA2026.Web.Services;
-global using static Microsoft.AspNetCore.Components.Web.RenderMode;
