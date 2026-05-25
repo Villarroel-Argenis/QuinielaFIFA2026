@@ -5,7 +5,7 @@ public static class SlotService
     // Equipos por grupo
     private static readonly Dictionary<string, List<string>> Grupos = new()
     {
-        ["A"] = ["México", "Sudáfrica", "Corea del Sur", "Chequia"],
+        ["A"] = ["México", "Sudáfrica", "Corea del Sur", "República Checa"],
         ["B"] = ["Canadá", "Bosnia-Herzegovina", "Catar", "Suiza"],
         ["C"] = ["Brasil", "Marruecos", "Haití", "Escocia"],
         ["D"] = ["EUA", "Paraguay", "Australia", "Turquía"],
@@ -91,7 +91,7 @@ public static class SlotService
         ["México"] = "🇲🇽",
         ["Sudáfrica"] = "🇿🇦",
         ["Corea del Sur"] = "🇰🇷",
-        ["Chequia"] = "🇨🇿",
+        ["República Checa"] = "🇨🇿",
         ["Canadá"] = "🇨🇦",
         ["Bosnia-Herzegovina"] = "🇧🇦",
         ["Catar"] = "🇶🇦",
