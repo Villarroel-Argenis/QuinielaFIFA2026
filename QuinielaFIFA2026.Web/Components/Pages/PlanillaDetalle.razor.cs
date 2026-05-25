@@ -21,6 +21,9 @@ public partial class PlanillaDetalle
     private int Total => _matchData.Count;
     private int Pct => Total > 0 ? (int)(Completadas * 100.0 / Total) : 0;
 
+    private bool IsAutoSlot(string? slot) =>
+            slot != null && (slot.StartsWith("W") || slot.StartsWith("RU"));
+            
     protected override async Task OnInitializedAsync()
     {
         if (!Session.IsLoggedIn)
@@ -123,5 +126,38 @@ public partial class PlanillaDetalle
     private string FormatHora(DateTime fechaUtc)
     {
         return fechaUtc.ToString("hh:mm tt", new CultureInfo("en-US"));
+    }
+
+    private string? ResolveSlot(string? slot)
+    {
+        if (string.IsNullOrEmpty(slot)) return null;
+
+        // Slot directo seleccionado por el usuario (1A, 2B, 3ABCDF...)
+        var directa = GetClasificacion(slot);
+        if (!string.IsNullOrEmpty(directa)) return directa;
+
+        // Ganador de partido: W73, W74...
+        if (slot.StartsWith("W") && int.TryParse(slot.Substring(1), out var matchNum))
+        {
+            var matchCode = $"M{matchNum:D2}";
+            var match = _matchData.FirstOrDefault(m => m.Match.MatchNumber == matchCode);
+            if (match == default) return null;
+            var pred = match.Pred?.PredictedResult;
+            if (pred == "home") return ResolveSlot(match.Match.HomeSlot);
+            if (pred == "away") return ResolveSlot(match.Match.AwaySlot);
+        }
+
+        // Perdedor: RU101, RU102
+        if (slot.StartsWith("RU") && int.TryParse(slot.Substring(2), out var ruNum))
+        {
+            var matchCode = $"M{ruNum:D2}";
+            var match = _matchData.FirstOrDefault(m => m.Match.MatchNumber == matchCode);
+            if (match == default) return null;
+            var pred = match.Pred?.PredictedResult;
+            if (pred == "home") return ResolveSlot(match.Match.AwaySlot);
+            if (pred == "away") return ResolveSlot(match.Match.HomeSlot);
+        }
+
+        return null;
     }
 }
