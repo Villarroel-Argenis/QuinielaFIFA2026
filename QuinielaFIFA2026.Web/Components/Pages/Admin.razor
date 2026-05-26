@@ -137,8 +137,221 @@
             </MudContainer>
         </MudTabPanel>
 
-    </MudTabs>
+        <!-- TAB 3: Resultados -->
+        <MudTabPanel Text="Resultados" Icon="@Icons.Material.Filled.SportsSoccer">
+            <MudContainer Class="pa-4">
+                <div class="d-flex justify-space-between align-center mb-4">
+                    <MudText Typo="Typo.h6">Ingresar resultados oficiales</MudText>
+                    <MudButton Variant="Variant.Outlined" Color="Color.Error"
+                               StartIcon="@Icons.Material.Filled.RestartAlt"
+                               OnClick='() => _showConfirmResetAll = true'>
+                        Resetear todos
+                    </MudButton>
+                </div>
+
+                @foreach (var grupo in _allMatches
+                    .OrderBy(m => m.Match.MatchDateUtc)
+                    .GroupBy(m => m.Match.MatchDateUtc.Date)
+                    .Select(g => (Fecha: g.Key, Partidos: g.ToList())))
+                {
+                    <div class="mt-4 mb-2 d-flex align-center gap-2">
+                        <MudIcon Icon="@Icons.Material.Filled.CalendarToday"
+                                 Size="Size.Small" Color="Color.Primary" />
+                        <MudText Typo="Typo.subtitle1"
+                                 Style="font-weight:600; text-transform:capitalize;">
+                            @grupo.Fecha.ToString("dddd d 'de' MMMM yyyy",
+                                new System.Globalization.CultureInfo("es-ES"))
+                        </MudText>
+                    </div>
+                    <MudDivider Class="mb-3" />
+                    <MudTable Items="@grupo.Partidos" Dense="true" Hover="true"
+                              Striped="true" Class="mb-4">
+                        <HeaderContent>
+                            <MudTh>Partido</MudTh>
+                            <MudTh Style="text-align:right">Local</MudTh>
+                            <MudTh Style="text-align:center"></MudTh>
+                            <MudTh>Visitante</MudTh>
+                            <MudTh Style="text-align:center">L</MudTh>
+                            <MudTh Style="text-align:center">E</MudTh>
+                            <MudTh Style="text-align:center">V</MudTh>
+                            <MudTh Style="text-align:center"></MudTh>
+                        </HeaderContent>
+                        <RowTemplate>
+                            <MudTd>
+                                <div>@context.Match.MatchNumber</div>
+                                <div class="mud-text-secondary" style="font-size:0.75rem">
+                                    @context.Match.MatchDateUtc.ToString("HH:mm")
+                                </div>
+                            </MudTd>
+
+                            <!-- Local -->
+                            <MudTd Style="text-align:right; font-size: 1.4rem">
+                                @if (!string.IsNullOrEmpty(context.Match.HomeSlot) && context.Match.HomeTeam == "TBD")
+                                {
+                                    var resolvedHome = ResolveOfficialTeam(context.Match.HomeSlot);
+                                    <div class="mud-text-secondary" style="font-size:0.75rem">
+                                        @SlotService.GetDescripcion(context.Match.HomeSlot)
+                                    </div>
+                                    @if (!string.IsNullOrEmpty(resolvedHome))
+                                    {
+                                        <div class="d-flex align-center justify-end gap-1">
+                                            <img src="@SlotService.GetFlagUrl(resolvedHome)"
+                                                 style="width:24px;height:18px;object-fit:cover;" />
+                                            <span>@resolvedHome</span>
+                                        </div>
+                                    }
+                                    else if (!context.Match.HomeSlot.StartsWith("W") && !context.Match.HomeSlot.StartsWith("RU"))
+                                    {
+                                        <MudSelect T="string"
+                                                   ValueChanged='v => AsignarEquipo(context.Match.Id, true, v)'
+                                                   Dense="true" Margin="Margin.Dense"
+                                                   Placeholder="@SlotService.GetDescripcion(context.Match.HomeSlot)">
+                                            @foreach (var eq in GetEquiposSlot(context.Match.HomeSlot))
+                                            {
+                                                <MudSelectItem Value="@eq">@eq</MudSelectItem>
+                                            }
+                                        </MudSelect>
+                                    }
+                                    else
+                                    {
+                                        <span class="mud-text-secondary" style="font-size:0.85rem">
+                                            Por definir
+                                        </span>
+                                    }
+                                }
+                                else
+                                {
+                                    <div class="d-flex align-center justify-end gap-1">
+                                        <img src="@GetDisplayFlagUrl(context.Match, true)"
+                                             style="width:24px;height:18px;object-fit:cover;" />
+                                        <span>@GetDisplayTeam(context.Match, true)</span>
+                                        @if (!string.IsNullOrEmpty(context.Match.HomeSlot))
+                                        {
+                                            <MudIconButton Icon="@Icons.Material.Filled.Close"
+                                                           Size="Size.Small"
+                                                           OnClick='() => AsignarEquipo(context.Match.Id, true, "TBD")' />
+                                        }
+                                    </div>
+                                }
+                            </MudTd>
+
+                            <MudTd Style="text-align:center; color:#2E7D32; font-weight:bold;">@@</MudTd>
+
+                            <!-- Visitante -->
+                            <MudTd style="font-size: 1.4rem">
+                                @if (!string.IsNullOrEmpty(context.Match.AwaySlot) && context.Match.AwayTeam == "TBD")
+                                {
+                                    var resolvedAway = ResolveOfficialTeam(context.Match.AwaySlot);
+                                    <div class="mud-text-secondary" style="font-size:0.75rem">
+                                        @SlotService.GetDescripcion(context.Match.AwaySlot)
+                                    </div>
+                                    @if (!string.IsNullOrEmpty(resolvedAway))
+                                    {
+                                        <div class="d-flex align-center gap-1">
+                                            <img src="@SlotService.GetFlagUrl(resolvedAway)"
+                                                 style="width:24px;height:18px;object-fit:cover;" />
+                                            <span>@resolvedAway</span>
+                                        </div>
+                                    }
+                                    else if (!context.Match.AwaySlot.StartsWith("W") && !context.Match.AwaySlot.StartsWith("RU"))
+                                    {
+                                        <MudSelect T="string"
+                                                   ValueChanged='v => AsignarEquipo(context.Match.Id, false, v)'
+                                                   Dense="true" Margin="Margin.Dense"
+                                                   Placeholder="@SlotService.GetDescripcion(context.Match.AwaySlot)">
+                                            @foreach (var eq in GetEquiposSlot(context.Match.AwaySlot))
+                                            {
+                                                <MudSelectItem Value="@eq">@eq</MudSelectItem>
+                                            }
+                                        </MudSelect>
+                                    }
+                                    else
+                                    {
+                                        <span class="mud-text-secondary" style="font-size:0.85rem">
+                                            Por definir
+                                        </span>
+                                    }
+                                }
+                                else
+                                {
+                                    <div class="d-flex align-center gap-1">
+                                        <img src="@GetDisplayFlagUrl(context.Match, false)"
+                                             style="width:24px;height:18px;object-fit:cover;" />
+                                        <span>@GetDisplayTeam(context.Match, false)</span>
+                                        @if (!string.IsNullOrEmpty(context.Match.AwaySlot))
+                                        {
+                                            <MudIconButton Icon="@Icons.Material.Filled.Close"
+                                                           Size="Size.Small"
+                                                           OnClick='() => AsignarEquipo(context.Match.Id, false, "TBD")' />
+                                        }
+                                    </div>
+                                }
+                            </MudTd>
+
+                            <!-- L -->
+                            <MudTd Style="text-align:center">
+                                <MudButton Variant="@(context.Result?.Result == "home" ? Variant.Filled : Variant.Outlined)"
+                                           Color="Color.Primary" Size="Size.Small"
+                                           OnClick='() => GuardarResultado(context.Match.Id, "home")'>
+                                    L
+                                </MudButton>
+                            </MudTd>
+
+                            <!-- E -->
+                            <MudTd Style="text-align:center">
+                                @if (context.Match.AllowDraw)
+                                {
+                                    <MudButton Variant="@(context.Result?.Result == "draw" ? Variant.Filled : Variant.Outlined)"
+                                               Color="Color.Secondary" Size="Size.Small"
+                                               OnClick='() => GuardarResultado(context.Match.Id, "draw")'>
+                                        E
+                                    </MudButton>
+                                }
+                            </MudTd>
+
+                            <!-- V -->
+                            <MudTd Style="text-align:center">
+                                <MudButton Variant="@(context.Result?.Result == "away" ? Variant.Filled : Variant.Outlined)"
+                                           Color="Color.Error" Size="Size.Small"
+                                           OnClick='() => GuardarResultado(context.Match.Id, "away")'>
+                                    V
+                                </MudButton>
+                            </MudTd>
+
+                            <!-- Reset individual -->
+                            <MudTd Style="text-align:center">
+                                @if (context.Result != null)
+                                {
+                                    <MudIconButton Icon="@Icons.Material.Filled.RestartAlt"
+                                                   Size="Size.Small" Color="Color.Warning"
+                                                   OnClick='() => ResetearResultado(context.Match.Id)' />
+                                }
+                            </MudTd>
+
+                        </RowTemplate>
+                    </MudTable>
+                }
+            </MudContainer>
+        </MudTabPanel>
+     </MudTabs>
 </MudContainer>
+
+<!-- Dialog resetear todos -->
+<MudDialog @bind-Visible="_showConfirmResetAll">
+    <TitleContent><MudText Typo="Typo.h6">Resetear todos los resultados</MudText></TitleContent>
+    <DialogContent>
+        <MudText>
+            ¿Estás seguro que deseas eliminar <strong>todos</strong> los resultados ingresados?
+            Esta acción no se puede deshacer.
+        </MudText>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="() => _showConfirmResetAll = false">Cancelar</MudButton>
+        <MudButton Color="Color.Error" Variant="Variant.Filled" OnClick="ResetearTodosLosResultados">
+            Resetear todo
+        </MudButton>
+    </DialogActions>
+</MudDialog>
 
 <MudDialog @bind-Visible="_showConfirmLote">
     <TitleContent>
