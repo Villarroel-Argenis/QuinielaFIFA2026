@@ -267,6 +267,67 @@ public class QuinielaService(AppDbContext db)
         await db.SaveChangesAsync();
     }
 
+    public async Task<List<(Match Match, MatchResult? Result)>> GetAllMatchesWithResultsAsync()
+    {
+        var matches = await db.Matches
+            .Include(m => m.Result)
+            .OrderBy(m => m.MatchDateUtc)
+            .ToListAsync();
+        return matches.Select(m => (m, m.Result)).ToList();
+    }
+
+    public async Task SaveMatchResultAsync(int matchId, string result)
+    {
+        var existing = await db.MatchResults.FirstOrDefaultAsync(r => r.MatchId == matchId);
+        if (existing != null)
+        {
+            existing.Result = result;
+            existing.EnteredAt = DateTime.UtcNow;
+        }
+        else
+        {
+            db.MatchResults.Add(new MatchResult
+            {
+                MatchId = matchId,
+                Result = result,
+                EnteredAt = DateTime.UtcNow
+            });
+        }
+        await db.SaveChangesAsync();
+    }
+
+    public async Task UpdateMatchTeamAsync(int matchId, bool isHome, string equipo)
+    {
+        var match = await db.Matches.FindAsync(matchId);
+        if (match is null) return;
+        if (isHome)
+        {
+            match.HomeTeam = equipo;
+            match.HomeFlagEmoji = SlotService.GetBandera(equipo);
+        }
+        else
+        {
+            match.AwayTeam = equipo;
+            match.AwayFlagEmoji = SlotService.GetBandera(equipo);
+        }
+        await db.SaveChangesAsync();
+    }
+
+    public async Task ResetearResultadoAsync(int matchId)
+    {
+        var result = await db.MatchResults.FirstOrDefaultAsync(r => r.MatchId == matchId);
+        if (result != null)
+        {
+            db.MatchResults.Remove(result);
+            await db.SaveChangesAsync();
+        }
+    }
+
+    public async Task ResetearTodosLosResultadosAsync()
+    {
+        db.MatchResults.RemoveRange(db.MatchResults);
+        await db.SaveChangesAsync();
+    }
 }
 
 public class LeaderboardEntry
