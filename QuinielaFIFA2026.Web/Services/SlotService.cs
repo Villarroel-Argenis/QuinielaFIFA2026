@@ -132,12 +132,68 @@ public static class SlotService
         ["RD Congo"] = "🇨🇩",
         ["Uzbekistán"] = "🇺🇿",
         ["Colombia"] = "🇨🇴",
-        ["Inglaterra"] = "🏴󠁧󠁢󠁥󠁮󠁧󠁿",
+        ["Inglaterra"] = "uk󠁧󠁢󠁥󠁮󠁧󠁿",
         ["Croacia"] = "🇭🇷",
         ["Ghana"] = "🇬🇭",
         ["Panamá"] = "🇵🇦",
     };
 
+    private static readonly Dictionary<string, string> CodigoPais = new()
+    {
+        ["México"] = "mx",
+        ["Sudáfrica"] = "za",
+        ["Corea del Sur"] = "kr",
+        ["República Checa"] = "cz",
+        ["Canadá"] = "ca",
+        ["Bosnia-Herzegovina"] = "ba",
+        ["Catar"] = "qa",
+        ["Suiza"] = "ch",
+        ["Brasil"] = "br",
+        ["Marruecos"] = "ma",
+        ["Haití"] = "ht",
+        ["Escocia"] = "gb-sct",
+        ["EUA"] = "us",
+        ["Paraguay"] = "py",
+        ["Australia"] = "au",
+        ["Turquía"] = "tr",
+        ["Alemania"] = "de",
+        ["Curazao"] = "cw",
+        ["Costa de Marfil"] = "ci",
+        ["Ecuador"] = "ec",
+        ["Países Bajos"] = "nl",
+        ["Japón"] = "jp",
+        ["Suecia"] = "se",
+        ["Túnez"] = "tn",
+        ["Bélgica"] = "be",
+        ["Egipto"] = "eg",
+        ["Irán"] = "ir",
+        ["Nueva Zelanda"] = "nz",
+        ["España"] = "es",
+        ["Cabo Verde"] = "cv",
+        ["Arabia Saudita"] = "sa",
+        ["Uruguay"] = "uy",
+        ["Francia"] = "fr",
+        ["Senegal"] = "sn",
+        ["Irak"] = "iq",
+        ["Noruega"] = "no",
+        ["Argentina"] = "ar",
+        ["Argelia"] = "dz",
+        ["Austria"] = "at",
+        ["Jordania"] = "jo",
+        ["Portugal"] = "pt",
+        ["RD Congo"] = "cd",
+        ["Uzbekistán"] = "uz",
+        ["Colombia"] = "co",
+        ["Inglaterra"] = "gb-eng",
+        ["Croacia"] = "hr",
+        ["Ghana"] = "gh",
+        ["Panamá"] = "pa",
+    };
+
+    public static string GetFlagUrl(string? equipo) =>
+        !string.IsNullOrEmpty(equipo) && CodigoPais.TryGetValue(equipo, out var code)
+            ? $"https://flagcdn.com/24x18/{code}.png"
+            : "";
     public static string GetBandera(string equipo) =>
         Banderas.TryGetValue(equipo, out var bandera) ? bandera : "🏳";
 

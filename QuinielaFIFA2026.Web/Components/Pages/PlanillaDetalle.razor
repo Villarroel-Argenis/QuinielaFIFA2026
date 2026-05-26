@@ -72,236 +72,245 @@
                                     }
                                     <div class="mud-text-secondary" style="font-size:0.75rem">@context.Match.Venue</div>
                                     <div class="mud-text-secondary" style="font-size:0.75rem">
-                                        @FormatHora(context.Match.MatchDateUtc)</div>
+                                        @FormatHora(context.Match.MatchDateUtc)
+                                    </div>
+                                </MudTd>
+                                <MudTd Style="text-align:right; font-size: 1.4rem">
+                                    <div class="d-flex align-center justify-end gap-1">
+                                        <img src="@SlotService.GetFlagUrl(context.Match.HomeTeam)"
+                                             style="width:24px;height:18px;object-fit:cover;" />
+                                        <span>@context.Match.HomeTeam</span>
+                                    </div>
+                                </MudTd>
+                                <MudTd Style="text-align:center; color: #2E7D32; font-weight:bold;">@@</MudTd>
+                                <MudTd Style="font-size: 1.4rem">
+                                    <div class="d-flex align-center gap-1">
+                                        <img src="@SlotService.GetFlagUrl(context.Match.AwayTeam)"
+                                             style="width:24px;height:18px;object-fit:cover;" />
+                                        <span>@context.Match.AwayTeam</span>
+                                    </div>
+                                </MudTd>
+                                <MudTd Style="text-align:center">
+                                    <MudButton Variant="@(context.Pred?.PredictedResult == "home" ? Variant.Filled : Variant.Outlined)"
+                                               Color="Color.Primary" Size="Size.Small" Disabled="@_bloqueada"
+                                               OnClick='() => Predecir(context.Match.Id, "home")'>
+                                        L
+                                    </MudButton>
+                                </MudTd>
+                                <MudTd Style="text-align:center">
+                                    <MudButton Variant="@(context.Pred?.PredictedResult == "draw" ? Variant.Filled : Variant.Outlined)"
+                                               Color="Color.Secondary" Size="Size.Small" Disabled="@_bloqueada"
+                                               OnClick='() => Predecir(context.Match.Id, "draw")'>
+                                        E
+                                    </MudButton>
+                                </MudTd>
+                                <MudTd Style="text-align:center">
+                                    <MudButton Variant="@(context.Pred?.PredictedResult == "away" ? Variant.Filled : Variant.Outlined)"
+                                               Color="Color.Error" Size="Size.Small" Disabled="@_bloqueada"
+                                               OnClick='() => Predecir(context.Match.Id, "away")'>
+                                        V
+                                    </MudButton>
+                                </MudTd>
+                            </RowTemplate>
+                        </MudTable>
+                    }
+                </MudContainer>
+            </MudTabPanel>
+
+            <!-- Tabs eliminatorias -->
+            @foreach (var stage in _stagesEliminatorias)
+            {
+                <MudTabPanel Text="@stage">
+                    <MudContainer Class="pa-4">
+                        @foreach (var (fecha, partidos) in _matchData
+                            .Where(m => m.Match.Stage == stage)
+                            .GroupBy(m => m.Match.MatchDateUtc.Date)
+                            .OrderBy(g => g.Key)
+                            .Select(g => (Fecha: g.Key, Partidos: g.ToList())))
+                        {
+                            <div class="mt-4 mb-2 d-flex align-center gap-2">
+                                <MudIcon Icon="@Icons.Material.Filled.CalendarToday" Size="Size.Small" Color="Color.Primary" />
+                                <MudText Typo="Typo.subtitle1" Style="font-weight:600; text-transform:capitalize;">
+                                    @FormatFecha(fecha)
+                                </MudText>
+                            </div>
+                            <MudDivider Class="mb-3" />
+                            <MudTable Items="@partidos" Dense="true" Hover="true" Striped="true" Class="mb-4">
+                                <HeaderContent>
+                                    <MudTh>Partido</MudTh>
+                                    <MudTh Style="text-align:right">Local</MudTh>
+                                    <MudTh Style="text-align:center"></MudTh>
+                                    <MudTh>Visitante</MudTh>
+                                    <MudTh Style="text-align:center">L</MudTh>
+                                    <MudTh Style="text-align:center"></MudTh>
+                                    <MudTh Style="text-align:center">V</MudTh>
+                                </HeaderContent>
+                                <RowTemplate>
+                                    <MudTd>
+                                        <div>@context.Match.MatchNumber</div>
+                                        <div class="mud-text-secondary" style="font-size:0.75rem">@context.Match.Venue</div>
+                                        <div class="mud-text-secondary" style="font-size:0.75rem">
+                                            @FormatHora(context.Match.MatchDateUtc)
+                                        </div>
                                     </MudTd>
+
+                                    <!-- Local -->
                                     <MudTd Style="text-align:right; font-size: 1.4rem">
-                                        @context.Match.HomeFlagEmoji @context.Match.HomeTeam
+                                        @if (!string.IsNullOrEmpty(context.Match.HomeSlot))
+                                        {
+                                            <div class="mud-text-secondary" style="font-size:0.75rem">
+                                                @SlotService.GetDescripcion(context.Match.HomeSlot)
+                                            </div>
+                                            @if (IsAutoSlot(context.Match.HomeSlot))
+                                            {
+                                                // W73, W74... se resuelven automáticamente
+                                                var resolved = ResolveSlot(context.Match.HomeSlot);
+                                                @if (!string.IsNullOrEmpty(resolved))
+                                                {
+                                                    <div class="d-flex align-center justify-end gap-1">
+                                                        <img src="@SlotService.GetFlagUrl(GetClasificacion(resolved))"
+                                                             style="width:24px;height:18px;object-fit:cover;" />                                                       
+                                                        <span style="font-size:1.1rem">@resolved</span>
+                                                    </div>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                @if (!string.IsNullOrEmpty(GetClasificacion(context.Match.HomeSlot)))
+                                                {
+                                                    <div class="d-flex align-center justify-end gap-1">
+                                                        <img src="@SlotService.GetFlagUrl(GetClasificacion(context.Match.HomeSlot))"
+                                                             style="width:24px;height:18px;object-fit:cover;" />
+                                                        <span>@GetClasificacion(context.Match.HomeSlot)</span>
+                                                        @if (!_bloqueada)
+                                                        {
+                                                            <MudIconButton Icon="@Icons.Material.Filled.Close" Size="Size.Small"
+                                                                           OnClick='() => SaveClasificacion(context.Match.HomeSlot!, "")' />
+                                                        }
+                                                    </div>
+                                                }
+                                                @if (!_bloqueada && string.IsNullOrEmpty(GetClasificacion(context.Match.HomeSlot)))
+                                                {
+                                                    <MudSelect T="string" Value="@GetClasificacion(context.Match.HomeSlot)"
+                                                               ValueChanged='v => SaveClasificacion(context.Match.HomeSlot!, v)' Dense="true"
+                                                               Margin="Margin.Dense" Placeholder="@SlotService.GetDescripcion(context.Match.HomeSlot)">
+                                                        @foreach (var eq in GetEquiposDisponibles(context.Match.HomeSlot!))
+                                                        {
+                                                            <MudSelectItem Value="@eq">@eq</MudSelectItem>
+                                                        }
+                                                    </MudSelect>
+                                                }
+                                            }
+                                        }
+                                        else
+                                        {
+                                            @context.Match.HomeFlagEmoji@context.Match.HomeTeam
+                                        }
                                     </MudTd>
+
                                     <MudTd Style="text-align:center; color: #2E7D32; font-weight:bold;">@@</MudTd>
+
+                                    <!-- Visitante -->
                                     <MudTd Style="font-size: 1.4rem">
-                                        @context.Match.AwayFlagEmoji @context.Match.AwayTeam
+                                        @if (!string.IsNullOrEmpty(context.Match.AwaySlot))
+                                        {
+                                            <div class="mud-text-secondary" style="font-size:0.75rem">
+                                                @SlotService.GetDescripcion(context.Match.AwaySlot)
+                                            </div>
+                                            @if (IsAutoSlot(context.Match.AwaySlot))
+                                            {
+                                                // W73, W74... se resuelven automáticamente
+                                                var resolved = ResolveSlot(context.Match.AwaySlot);
+                                                @if (!string.IsNullOrEmpty(resolved))
+                                                {
+                                                    <div class="d-flex align-center gap-1">
+                                                        <img src="@SlotService.GetFlagUrl(GetClasificacion(resolved))"
+                                                             style="width:24px;height:18px;object-fit:cover;" />
+                                                        <span style="font-size:1.4rem">@resolved</span>
+                                                    </div>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                @if (!string.IsNullOrEmpty(GetClasificacion(context.Match.AwaySlot)))
+                                                {
+                                                    <div class="d-flex align-center gap-1">
+                                                        <img src="@SlotService.GetFlagUrl(GetClasificacion(context.Match.AwaySlot))"
+                                                             style="width:24px;height:18px;object-fit:cover;" />
+                                                        <span>@GetClasificacion(context.Match.AwaySlot)</span>
+                                                        @if (!_bloqueada)
+                                                        {
+                                                            <MudIconButton Icon="@Icons.Material.Filled.Close" Size="Size.Small"
+                                                                           OnClick='() => SaveClasificacion(context.Match.AwaySlot!, "")' />
+                                                        }
+                                                    </div>
+                                                }
+                                                @if (!_bloqueada && string.IsNullOrEmpty(@GetClasificacion(context.Match.AwaySlot)))
+                                                {
+                                                    <MudSelect T="string" Value="@GetClasificacion(context.Match.AwaySlot)"
+                                                               ValueChanged='v => SaveClasificacion(context.Match.AwaySlot!, v)' Dense="true"
+                                                               Margin="Margin.Dense" Placeholder="@SlotService.GetDescripcion(context.Match.AwaySlot)">
+                                                        @foreach (var eq in GetEquiposDisponibles(context.Match.AwaySlot!))
+                                                        {
+                                                            <MudSelectItem Value="@eq">@eq</MudSelectItem>
+                                                        }
+                                                    </MudSelect>
+                                                }
+                                            }
+                                        }
+                                        else
+                                        {
+                                            @context.Match.AwayFlagEmoji@context.Match.AwayTeam
+                                        }
                                     </MudTd>
+
+                                    <!-- L -->
                                     <MudTd Style="text-align:center">
-                                        <MudButton
-                                            Variant="@(context.Pred?.PredictedResult == "home" ? Variant.Filled : Variant.Outlined)"
-                                            Color="Color.Primary" Size="Size.Small" Disabled="@_bloqueada"
-                                            OnClick='() => Predecir(context.Match.Id, "home")'>
+                                        <MudButton Variant="@(context.Pred?.PredictedResult == "home" ? Variant.Filled : Variant.Outlined)"
+                                                   Color="Color.Primary" Size="Size.Small" Disabled="@_bloqueada"
+                                                   OnClick='() => Predecir(context.Match.Id, "home")'>
                                             L
                                         </MudButton>
                                     </MudTd>
+
+                                    <!-- E vacío para eliminatorias -->
+                                    <MudTd Style="text-align:center"></MudTd>
+
+                                    <!-- V -->
                                     <MudTd Style="text-align:center">
-                                        <MudButton
-                                            Variant="@(context.Pred?.PredictedResult == "draw" ? Variant.Filled : Variant.Outlined)"
-                                            Color="Color.Secondary" Size="Size.Small" Disabled="@_bloqueada"
-                                            OnClick='() => Predecir(context.Match.Id, "draw")'>
-                                            E
-                                        </MudButton>
-                                    </MudTd>
-                                    <MudTd Style="text-align:center">
-                                        <MudButton
-                                            Variant="@(context.Pred?.PredictedResult == "away" ? Variant.Filled : Variant.Outlined)"
-                                            Color="Color.Error" Size="Size.Small" Disabled="@_bloqueada"
-                                            OnClick='() => Predecir(context.Match.Id, "away")'>
+                                        <MudButton Variant="@(context.Pred?.PredictedResult == "away" ? Variant.Filled : Variant.Outlined)"
+                                                   Color="Color.Error" Size="Size.Small" Disabled="@_bloqueada"
+                                                   OnClick='() => Predecir(context.Match.Id, "away")'>
                                             V
                                         </MudButton>
                                     </MudTd>
+
                                 </RowTemplate>
                             </MudTable>
                         }
                     </MudContainer>
                 </MudTabPanel>
-
-                <!-- Tabs eliminatorias -->
-                @foreach (var stage in _stagesEliminatorias)
-                {
-                    <MudTabPanel Text="@stage">
-                        <MudContainer Class="pa-4">
-                            @foreach (var (fecha, partidos) in _matchData
-                                .Where(m => m.Match.Stage == stage)
-                                .GroupBy(m => m.Match.MatchDateUtc.Date)
-                                .OrderBy(g => g.Key)
-                                .Select(g => (Fecha: g.Key, Partidos: g.ToList())))
-                            {
-                                <div class="mt-4 mb-2 d-flex align-center gap-2">
-                                    <MudIcon Icon="@Icons.Material.Filled.CalendarToday" Size="Size.Small" Color="Color.Primary" />
-                                    <MudText Typo="Typo.subtitle1" Style="font-weight:600; text-transform:capitalize;">
-                                        @FormatFecha(fecha)
-                                    </MudText>
-                                </div>
-                                <MudDivider Class="mb-3" />
-                                <MudTable Items="@partidos" Dense="true" Hover="true" Striped="true" Class="mb-4">
-                                    <HeaderContent>
-                                        <MudTh>Partido</MudTh>
-                                        <MudTh Style="text-align:right">Local</MudTh>
-                                        <MudTh Style="text-align:center"></MudTh>
-                                        <MudTh>Visitante</MudTh>
-                                        <MudTh Style="text-align:center">L</MudTh>
-                                        <MudTh Style="text-align:center"></MudTh>
-                                        <MudTh Style="text-align:center">V</MudTh>
-                                    </HeaderContent>
-                                    <RowTemplate>
-                                        <MudTd>
-                                            <div>@context.Match.MatchNumber</div>
-                                            <div class="mud-text-secondary" style="font-size:0.75rem">@context.Match.Venue</div>
-                                            <div class="mud-text-secondary" style="font-size:0.75rem">
-                                                @FormatHora(context.Match.MatchDateUtc)</div>
-                                            </MudTd>
-
-                                            <!-- Local -->
-                                            <MudTd Style="text-align:right; font-size: 1.4rem">
-                                                @if (!string.IsNullOrEmpty(context.Match.HomeSlot))
-                                                {
-                                                    <div class="mud-text-secondary" style="font-size:0.75rem">
-                                                        @SlotService.GetDescripcion(context.Match.HomeSlot)
-                                                    </div>
-                                                    @if (IsAutoSlot(context.Match.HomeSlot))
-                                                    {
-                                                        // W73, W74... se resuelven automáticamente
-                                                        var resolved = ResolveSlot(context.Match.HomeSlot);
-                                                        @if (!string.IsNullOrEmpty(resolved))
-                                                        {
-                                                            <div class="d-flex align-center justify-end gap-1">
-                                                                <span style="font-size:1.4rem">@SlotService.GetBandera(resolved)</span>
-                                                                <span style="font-size:1.1rem">@resolved</span>
-                                                            </div>
-                                                        }
-                                                    }
-                                                    else
-                                                    {
-                                                        @if (!string.IsNullOrEmpty(GetClasificacion(context.Match.HomeSlot)))
-                                                        {
-                                                            <div class="d-flex align-center justify-end gap-1">
-                                                                <span>@SlotService.GetBandera(GetClasificacion(context.Match.HomeSlot)!)</span>
-                                                                <span>@GetClasificacion(context.Match.HomeSlot)</span>
-                                                                @if (!_bloqueada)
-                                                                {
-                                                                    <MudIconButton Icon="@Icons.Material.Filled.Close" Size="Size.Small"
-                                                                                   OnClick='() => SaveClasificacion(context.Match.HomeSlot!, "")' />
-                                                                }
-                                                            </div>
-                                                        }
-                                                        @if (!_bloqueada && string.IsNullOrEmpty(GetClasificacion(context.Match.HomeSlot)))
-                                                        {
-                                                            <MudSelect T="string" Value="@GetClasificacion(context.Match.HomeSlot)"
-                                                                       ValueChanged='v => SaveClasificacion(context.Match.HomeSlot!, v)' Dense="true"
-                                                                       Margin="Margin.Dense" Placeholder="@SlotService.GetDescripcion(context.Match.HomeSlot)">
-                                                                @foreach (var eq in GetEquiposDisponibles(context.Match.HomeSlot!))
-                                                                {
-                                                                    <MudSelectItem Value="@eq">@eq</MudSelectItem>
-                                                                }
-                                                            </MudSelect>
-                                                        }
-                                                    }
-                                                }
-                                                else
-                                                {
-                                                    @context.Match.HomeFlagEmoji @context.Match.HomeTeam
-                                                }
-                                            </MudTd>
-
-                                            <MudTd Style="text-align:center; color: #2E7D32; font-weight:bold;">@@</MudTd>
-
-                                            <!-- Visitante -->
-                                            <MudTd Style="font-size: 1.4rem">
-                                                @if (!string.IsNullOrEmpty(context.Match.AwaySlot))
-                                                {
-                                                    <div class="mud-text-secondary" style="font-size:0.75rem">
-                                                        @SlotService.GetDescripcion(context.Match.AwaySlot)
-                                                    </div>
-                                                    @if (IsAutoSlot(context.Match.AwaySlot))
-                                                    {
-                                                        // W73, W74... se resuelven automáticamente
-                                                        var resolved = ResolveSlot(context.Match.AwaySlot);
-                                                        @if (!string.IsNullOrEmpty(resolved))
-                                                        {
-                                                            <div class="d-flex align-center gap-1">
-                                                                <span style="font-size:1.4rem">@SlotService.GetBandera(resolved)</span>
-                                                                <span style="font-size:1.1rem">@resolved</span>
-                                                            </div>
-                                                        }
-                                                    }
-                                                    else
-                                                    {
-                                                        @if (!string.IsNullOrEmpty(GetClasificacion(context.Match.AwaySlot)))
-                                                        {
-                                                            <div class="d-flex align-center gap-1">
-                                                                <span>@SlotService.GetBandera(GetClasificacion(context.Match.AwaySlot)!)</span>
-                                                                <span>@GetClasificacion(context.Match.AwaySlot)</span>
-                                                                @if (!_bloqueada)
-                                                                {
-                                                                    <MudIconButton Icon="@Icons.Material.Filled.Close" Size="Size.Small"
-                                                                                   OnClick='() => SaveClasificacion(context.Match.AwaySlot!, "")' />
-                                                                }
-                                                            </div>
-                                                        }
-                                                        @if (!_bloqueada && string.IsNullOrEmpty(@GetClasificacion(context.Match.AwaySlot)))
-                                                        {
-                                                            <MudSelect T="string" Value="@GetClasificacion(context.Match.AwaySlot)"
-                                                                       ValueChanged='v => SaveClasificacion(context.Match.AwaySlot!, v)' Dense="true"
-                                                                       Margin="Margin.Dense" Placeholder="@SlotService.GetDescripcion(context.Match.AwaySlot)">
-                                                                @foreach (var eq in GetEquiposDisponibles(context.Match.AwaySlot!))
-                                                                {
-                                                                    <MudSelectItem Value="@eq">@eq</MudSelectItem>
-                                                                }
-                                                            </MudSelect>
-                                                        }
-                                                    }
-                                                }
-                                                else
-                                                {
-                                                    @context.Match.AwayFlagEmoji @context.Match.AwayTeam
-                                                }
-                                            </MudTd>
-
-                                            <!-- L -->
-                                            <MudTd Style="text-align:center">
-                                                <MudButton
-                                                    Variant="@(context.Pred?.PredictedResult == "home" ? Variant.Filled : Variant.Outlined)"
-                                                    Color="Color.Primary" Size="Size.Small" Disabled="@_bloqueada"
-                                                    OnClick='() => Predecir(context.Match.Id, "home")'>
-                                                    L
-                                                </MudButton>
-                                            </MudTd>
-
-                                            <!-- E vacío para eliminatorias -->
-                                            <MudTd Style="text-align:center"></MudTd>
-
-                                            <!-- V -->
-                                            <MudTd Style="text-align:center">
-                                                <MudButton
-                                                    Variant="@(context.Pred?.PredictedResult == "away" ? Variant.Filled : Variant.Outlined)"
-                                                    Color="Color.Error" Size="Size.Small" Disabled="@_bloqueada"
-                                                    OnClick='() => Predecir(context.Match.Id, "away")'>
-                                                    V
-                                                </MudButton>
-                                            </MudTd>
-
-                                        </RowTemplate>
-                                    </MudTable>
-                                }
-                            </MudContainer>
-                        </MudTabPanel>
-                    }
-
-                </MudTabs>
-
-                <MudDialog @bind-Visible="_showConfirmReinicio">
-                    <TitleContent>
-                        <MudText Typo="Typo.h6">Reiniciar planilla</MudText>
-                    </TitleContent>
-                    <DialogContent>
-                        <MudText>
-                            ¿Estás seguro que deseas reiniciar todas las predicciones de la planilla
-                            <strong>@_planilla?.Codigo</strong>? Esta acción no se puede deshacer.
-                        </MudText>
-                    </DialogContent>
-                    <DialogActions>
-                        <MudButton OnClick='() => _showConfirmReinicio = false'>Cancelar</MudButton>
-                        <MudButton Color="Color.Error" Variant="Variant.Filled" OnClick="EjecutarReinicio">
-                            Reiniciar
-                        </MudButton>
-                    </DialogActions>
-                </MudDialog>
             }
 
-        </MudContainer>
+        </MudTabs>
+
+        <MudDialog @bind-Visible="_showConfirmReinicio">
+            <TitleContent>
+                <MudText Typo="Typo.h6">Reiniciar planilla</MudText>
+            </TitleContent>
+            <DialogContent>
+                <MudText>
+                    ¿Estás seguro que deseas reiniciar todas las predicciones de la planilla
+                    <strong>@_planilla?.Codigo</strong>? Esta acción no se puede deshacer.
+                </MudText>
+            </DialogContent>
+            <DialogActions>
+                <MudButton OnClick='() => _showConfirmReinicio = false'>Cancelar</MudButton>
+                <MudButton Color="Color.Error" Variant="Variant.Filled" OnClick="EjecutarReinicio">
+                    Reiniciar
+                </MudButton>
+            </DialogActions>
+        </MudDialog>
+    }
+
+</MudContainer>
