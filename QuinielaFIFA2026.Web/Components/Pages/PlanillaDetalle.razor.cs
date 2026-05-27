@@ -4,10 +4,11 @@ public partial class PlanillaDetalle
 {
     [Parameter] public int PlanillaId { get; set; }
 
-    [Inject] private SessionService Session { get; set; } = null!;
     [Inject] private QuinielaService QuinielaService { get; set; } = null!;
     [Inject] private NavigationManager Nav { get; set; } = null!;
     [Inject] private IConfiguration Config { get; set; } = null!;
+
+    [CascadingParameter] private Task<AuthenticationState> AuthState { get; set; } = null!;
 
     private Planilla? _planilla;
     private List<(Match Match, Prediction? Pred)> _matchData = new();
@@ -26,13 +27,10 @@ public partial class PlanillaDetalle
             
     protected override async Task OnInitializedAsync()
     {
-        if (!Session.IsLoggedIn)
-        {
-            Nav.NavigateTo("/");
-            return;
-        }
+        var auth = await AuthState;
+        var userId = int.Parse(auth.User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
 
-        _planilla = await QuinielaService.GetPlanillaAsync(PlanillaId, Session.CurrentUser!.Id);
+        _planilla = await QuinielaService.GetPlanillaAsync(PlanillaId, userId);
         if (_planilla is null)
         {
             Nav.NavigateTo("/mis-planillas");

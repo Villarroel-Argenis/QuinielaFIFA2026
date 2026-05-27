@@ -6,9 +6,22 @@ public static class SeedService
     {
         if (db.Matches.Any()) return;
         var matches = GetMatches();
+        var adminUser = GetAdminUser(db);
         db.Matches.AddRange(matches);
+        db.Users.Add(adminUser);
         await db.SaveChangesAsync();
     }
+
+    private static User GetAdminUser(AppDbContext db)
+    {
+        return new User
+        {
+            Username = "admin@quinielavinccler.com",
+            PasswordHash = BCrypt.Net.BCrypt.HashPassword("admin2026"),
+            Role = UserRole.Admin
+        };
+    }
+    
 
     public static async Task UpdateSlotsAsync(AppDbContext db)
     {
