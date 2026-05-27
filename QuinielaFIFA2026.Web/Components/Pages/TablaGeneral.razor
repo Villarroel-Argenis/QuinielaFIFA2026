@@ -1,5 +1,6 @@
 @page "/tabla"
 @rendermode InteractiveServer
+@attribute [Authorize]
 
 <PageTitle>Tabla General</PageTitle>
 
@@ -51,7 +52,7 @@
                 </MudTd>
                 <MudTd>
                     @entry.Username
-                    @if (entry.Username == Session.CurrentUser?.Username)
+                    @if (entry.Username == _currentUsername)
                     {
                         <MudChip T="string" Size="Size.Small" Color="Color.Primary" Class="ml-2">Tú</MudChip>
                     }

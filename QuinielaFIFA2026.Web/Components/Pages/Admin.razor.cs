@@ -2,9 +2,10 @@ namespace QuinielaFIFA2026.Web.Components.Pages;
 
 public partial class Admin
 {
-    [Inject] private SessionService Session { get; set; } = null!;
     [Inject] private QuinielaService QuinielaService { get; set; } = null!;
     [Inject] private NavigationManager Nav { get; set; } = null!;
+
+    [CascadingParameter] private Task<AuthenticationState> AuthState { get; set; } = null!;
 
     private List<(Match Match, MatchResult? Result)> _allMatches = [];
 
@@ -45,11 +46,7 @@ public partial class Admin
     
     protected override async Task OnInitializedAsync()
     {
-        if (!Session.IsLoggedIn || !Session.IsAdmin)
-        {
-            Nav.NavigateTo("/");
-            return;
-        }
+ 
         _lotes = await QuinielaService.GetLotesAsync();
         _allMatches = await QuinielaService.GetAllMatchesWithResultsAsync();
 
